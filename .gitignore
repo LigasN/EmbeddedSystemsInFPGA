@@ -1,9 +1,9 @@
 
-# Created by https://www.toptal.com/developers/gitignore/api/alteraquartusii
-# Edit at https://www.toptal.com/developers/gitignore?templates=alteraquartusii
+# Created with help from https://www.toptal.com/developers/gitignore/api/alteraquartusii
 
 ### AlteraQuartusII ###
-##list taken from http://www.alterawiki.com/wiki/Version_Control (01.10.2015)
+##list taken with help from http://www.alterawiki.com/wiki/Version_Control (01.10.2015)
+##and book "Systemy embedded w FPGA" Piotr Rzeszut
 
 ######### Quartus II source files
 
@@ -38,12 +38,19 @@
 ### project_name.sof SRAM Object File
 
 # software binary files
-
-/*
+# Ignore all files
+*
+# But..
 !/*.gitignore
-##
+## Quartus files
 !*.qpf
 !*.qsf
+!*.pof
+!*.qsys
+!*.sopcinfo
+!*.elf
+!*.hex
+!*.mif
 !*.qws
 !*.bdf
 !*.vhd
@@ -54,7 +61,14 @@
 !*.tbd
 !*.sof
 ## tbd
-
+# C programming files
+!*.c
+!*.h
+# Other stuff
 !*.tcl
 
-# End of https://www.toptal.com/developers/gitignore/api/alteraquartusii
+## Check if foregoing are not in subdirectories
+!*/
+
+# Materials from book "Systemy embedded w FPGA".
+/Materials/*
