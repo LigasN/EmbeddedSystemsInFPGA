@@ -18,8 +18,10 @@ MAXimator Altera MAX10 FPGA Starter Board
 I needed to download NIOSII Software Build Tools for Eclipse from Intel website. This program is not included to the quartus installation.
 ### * Error: Failed to execute: wsl ./create-this-app –no-make
 Solution is to download: [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10) and later by your Linux image wsl, make and dos2unix like:
-  sudo apt update
-  sudo apt upgrade
-  sudo apt install wsl make dos2unix
+``` bash
+sudo apt update
+sudo apt upgrade
+sudo apt install wsl make dos2unix
+```
 ### * System ID not found/ system id parameter is not assigned automatically quartus
 I'm still figuring this out
