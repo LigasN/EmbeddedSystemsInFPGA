@@ -24,4 +24,4 @@ sudo apt upgrade
 sudo apt install wsl make dos2unix
 ```
 ### * System ID not found/ system id parameter is not assigned automatically quartus
-Yup... So... Do not be silly and install version from tutorial :D It is 18.1 without the Update 1. It... Works! Probably first time when you start with this book, you will need to face the problems above, but eventually your project will work. My works :D after that change. Folder Project18.1.
+Yup... So... Do not be silly and install version from tutorial :smiley: It is 18.1 without the Update 1. It... Works! Probably first time when you start with this book, you will need to face the problems above, but eventually your project will work. My works :smiley: after that change. Folder Project18.1.
