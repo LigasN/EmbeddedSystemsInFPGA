@@ -527,7 +527,7 @@
    kind="altera_avalon_sysid_qsys"
    version="20.1"
    enabled="1">
-  <parameter name="id" value="305419896" />
+  <parameter name="id" value="-857870593" />
  </module>
  <connection
    kind="avalon"

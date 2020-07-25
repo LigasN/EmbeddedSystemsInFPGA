@@ -4,7 +4,7 @@
  * Machine generated for CPU 'CPU' in SOPC Builder design 'tutorial'
  * SOPC Builder design path: D:/Dokumenty/Pulpit/programming_stuff/projekty_wersje_ostateczne/EmbeddedSystemsInFPGA/Project/PlatformDesigner/tutorial.sopcinfo
  *
- * Generated: Fri Jul 24 21:09:51 CEST 2020
+ * Generated: Sat Jul 25 14:54:17 CEST 2020
  */
 
 /*
