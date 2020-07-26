@@ -77,15 +77,24 @@
  *        alt_getchar      Smaller overhead than getchar with direct drivers
  *
  */
-
+#include "system.h"
 #include "sys/alt_stdio.h"
+#include "sys/alt_sys_wrappers.h"
+#include "altera_avalon_pio_regs.h"
 
 int main()
 { 
-  alt_putstr("Hello from Nios II!\n");
+  alt_putstr("Hello from Nios II to you people!\n");
+
+  unsigned int i = 0;
 
   /* Event loop never exits. */
-  while (1);
+  while (1)
+  {
+	  ALT_USLEEP(1000000);
+	  IOWR_ALTERA_AVALON_PIO_DATA(LED_BASE, ~i);
+	  ++i;
+  }
 
   return 0;
 }

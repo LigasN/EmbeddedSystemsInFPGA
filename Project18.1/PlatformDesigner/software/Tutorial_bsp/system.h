@@ -4,7 +4,7 @@
  * Machine generated for CPU 'CPU' in SOPC Builder design 'tutorial01'
  * SOPC Builder design path: ../../tutorial01.sopcinfo
  *
- * Generated: Sun Jul 26 00:03:43 CEST 2020
+ * Generated: Sun Jul 26 19:49:23 CEST 2020
  */
 
 /*
@@ -135,9 +135,37 @@
 
 #define __ALTERA_AVALON_JTAG_UART
 #define __ALTERA_AVALON_ONCHIP_MEMORY2
+#define __ALTERA_AVALON_PIO
 #define __ALTERA_AVALON_SYSID_QSYS
 #define __ALTERA_NIOS2_GEN2
 #define __ALTPLL
+
+
+/*
+ * LED configuration
+ *
+ */
+
+#define ALT_MODULE_CLASS_LED altera_avalon_pio
+#define LED_BASE 0x11000
+#define LED_BIT_CLEARING_EDGE_REGISTER 0
+#define LED_BIT_MODIFYING_OUTPUT_REGISTER 1
+#define LED_CAPTURE 0
+#define LED_DATA_WIDTH 4
+#define LED_DO_TEST_BENCH_WIRING 0
+#define LED_DRIVEN_SIM_VALUE 0
+#define LED_EDGE_TYPE "NONE"
+#define LED_FREQ 50000000
+#define LED_HAS_IN 0
+#define LED_HAS_OUT 1
+#define LED_HAS_TRI 0
+#define LED_IRQ -1
+#define LED_IRQ_INTERRUPT_CONTROLLER_ID -1
+#define LED_IRQ_TYPE "NONE"
+#define LED_NAME "/dev/LED"
+#define LED_RESET_VALUE 10
+#define LED_SPAN 32
+#define LED_TYPE "altera_avalon_pio"
 
 
 /*
@@ -146,7 +174,7 @@
  */
 
 #define ALT_MODULE_CLASS_PLL altpll
-#define PLL_BASE 0x11000
+#define PLL_BASE 0x11020
 #define PLL_IRQ -1
 #define PLL_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define PLL_NAME "/dev/PLL"
@@ -199,19 +227,19 @@
 #define ALT_NUM_INTERNAL_INTERRUPT_CONTROLLERS 1
 #define ALT_NUM_INTERRUPT_CONTROLLERS 1
 #define ALT_STDERR "/dev/jtag_uart_0"
-#define ALT_STDERR_BASE 0x11010
+#define ALT_STDERR_BASE 0x11038
 #define ALT_STDERR_DEV jtag_uart_0
 #define ALT_STDERR_IS_JTAG_UART
 #define ALT_STDERR_PRESENT
 #define ALT_STDERR_TYPE "altera_avalon_jtag_uart"
 #define ALT_STDIN "/dev/jtag_uart_0"
-#define ALT_STDIN_BASE 0x11010
+#define ALT_STDIN_BASE 0x11038
 #define ALT_STDIN_DEV jtag_uart_0
 #define ALT_STDIN_IS_JTAG_UART
 #define ALT_STDIN_PRESENT
 #define ALT_STDIN_TYPE "altera_avalon_jtag_uart"
 #define ALT_STDOUT "/dev/jtag_uart_0"
-#define ALT_STDOUT_BASE 0x11010
+#define ALT_STDOUT_BASE 0x11038
 #define ALT_STDOUT_DEV jtag_uart_0
 #define ALT_STDOUT_IS_JTAG_UART
 #define ALT_STDOUT_PRESENT
@@ -236,7 +264,7 @@
  */
 
 #define ALT_MODULE_CLASS_jtag_uart_0 altera_avalon_jtag_uart
-#define JTAG_UART_0_BASE 0x11010
+#define JTAG_UART_0_BASE 0x11038
 #define JTAG_UART_0_IRQ 0
 #define JTAG_UART_0_IRQ_INTERRUPT_CONTROLLER_ID 0
 #define JTAG_UART_0_NAME "/dev/jtag_uart_0"
@@ -254,13 +282,13 @@
  */
 
 #define ALT_MODULE_CLASS_sysid_qsys_0 altera_avalon_sysid_qsys
-#define SYSID_QSYS_0_BASE 0x11018
+#define SYSID_QSYS_0_BASE 0x11030
 #define SYSID_QSYS_0_ID 305419896
 #define SYSID_QSYS_0_IRQ -1
 #define SYSID_QSYS_0_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define SYSID_QSYS_0_NAME "/dev/sysid_qsys_0"
 #define SYSID_QSYS_0_SPAN 8
-#define SYSID_QSYS_0_TIMESTAMP 1595713801
+#define SYSID_QSYS_0_TIMESTAMP 1595783652
 #define SYSID_QSYS_0_TYPE "altera_avalon_sysid_qsys"
 
 #endif /* __SYSTEM_H_ */

@@ -64,4 +64,12 @@ set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -
 set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -fall
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to clk_clk
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to reset_reset_n
+set_location_assignment PIN_M16 -to led_export[3]
+set_location_assignment PIN_N16 -to led_export[2]
+set_location_assignment PIN_P16 -to led_export[1]
+set_location_assignment PIN_R16 -to led_export[0]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to led_export[3]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to led_export[2]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to led_export[1]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to led_export[0]
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
