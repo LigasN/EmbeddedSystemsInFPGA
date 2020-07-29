@@ -25,3 +25,5 @@ sudo apt install wsl make dos2unix
 ```
 ### * System ID not found/ system id parameter is not assigned automatically quartus
 Yup... So... Do not be silly and install version from tutorial :smiley: It is 18.1 without the Update 1. It... Works! Probably first time when you start with this book, you will need to face the problems above, but eventually your project will work. My works :smiley: after that change. Folder Project18.1.
+### * Chapter 2.2.1 and "1<<0" in main.c
+In this example is the mistake with numer of "0" in every if condition. You need to count which number will be proper for this operation. For me {0, 1, 2} works well :stuck_out_tongue_winking_eye:

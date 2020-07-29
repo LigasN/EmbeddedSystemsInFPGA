@@ -91,9 +91,28 @@ int main()
   /* Event loop never exits. */
   while (1)
   {
-	  ALT_USLEEP(1000000);
+	  ALT_USLEEP(100000);
 	  IOWR_ALTERA_AVALON_PIO_DATA(LED_BASE, ~i);
-	  ++i;
+	  unsigned int sw = IORD_ALTERA_AVALON_PIO_DATA(SW_BASE);
+	  // 101
+	  // 010
+	  //-------
+	  // 000
+	  // !
+	  // 111
+	  if(!(sw & (1<<0)))
+	  {
+		  i = 0;
+	  }
+	  else if(!(sw & (1<<1)))
+	  {
+		  ++i;
+	  }
+	  else if(!(sw & (1<<2)))
+	  {
+		  --i;
+
+	  }
   }
 
   return 0;
