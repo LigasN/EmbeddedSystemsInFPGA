@@ -8,10 +8,12 @@ use IEEE.numeric_std.all;
 
 entity tutorial01 is
 	port (
-		clk_clk       : in  std_logic                    := '0';             --   clk.clk
-		led_export    : out std_logic_vector(3 downto 0);                    --   led.export
-		reset_reset_n : in  std_logic                    := '0';             -- reset.reset_n
-		sw_export     : in  std_logic_vector(2 downto 0) := (others => '0')  --    sw.export
+		clk_clk        : in  std_logic                    := '0';             --     clk.clk
+		led_export     : out std_logic_vector(3 downto 0);                    --     led.export
+		reset_reset_n  : in  std_logic                    := '0';             --   reset.reset_n
+		seg_seg_export : out std_logic_vector(7 downto 0);                    -- seg_seg.export
+		seg_sw_export  : out std_logic_vector(3 downto 0);                    --  seg_sw.export
+		sw_export      : in  std_logic_vector(2 downto 0) := (others => '0')  --      sw.export
 	);
 end entity tutorial01;
 
@@ -105,6 +107,32 @@ architecture rtl of tutorial01 is
 		);
 	end component tutorial01_RAM;
 
+	component tutorial01_SEG_SEG is
+		port (
+			clk        : in  std_logic                     := 'X';             -- clk
+			reset_n    : in  std_logic                     := 'X';             -- reset_n
+			address    : in  std_logic_vector(2 downto 0)  := (others => 'X'); -- address
+			write_n    : in  std_logic                     := 'X';             -- write_n
+			writedata  : in  std_logic_vector(31 downto 0) := (others => 'X'); -- writedata
+			chipselect : in  std_logic                     := 'X';             -- chipselect
+			readdata   : out std_logic_vector(31 downto 0);                    -- readdata
+			out_port   : out std_logic_vector(7 downto 0)                      -- export
+		);
+	end component tutorial01_SEG_SEG;
+
+	component tutorial01_SEG_SWITCH is
+		port (
+			clk        : in  std_logic                     := 'X';             -- clk
+			reset_n    : in  std_logic                     := 'X';             -- reset_n
+			address    : in  std_logic_vector(2 downto 0)  := (others => 'X'); -- address
+			write_n    : in  std_logic                     := 'X';             -- write_n
+			writedata  : in  std_logic_vector(31 downto 0) := (others => 'X'); -- writedata
+			chipselect : in  std_logic                     := 'X';             -- chipselect
+			readdata   : out std_logic_vector(31 downto 0);                    -- readdata
+			out_port   : out std_logic_vector(3 downto 0)                      -- export
+		);
+	end component tutorial01_SEG_SWITCH;
+
 	component tutorial01_SW is
 		port (
 			clk      : in  std_logic                     := 'X';             -- clk
@@ -189,6 +217,16 @@ architecture rtl of tutorial01 is
 			RAM_s1_byteenable                                     : out std_logic_vector(3 downto 0);                     -- byteenable
 			RAM_s1_chipselect                                     : out std_logic;                                        -- chipselect
 			RAM_s1_clken                                          : out std_logic;                                        -- clken
+			SEG_SEG_s1_address                                    : out std_logic_vector(2 downto 0);                     -- address
+			SEG_SEG_s1_write                                      : out std_logic;                                        -- write
+			SEG_SEG_s1_readdata                                   : in  std_logic_vector(31 downto 0) := (others => 'X'); -- readdata
+			SEG_SEG_s1_writedata                                  : out std_logic_vector(31 downto 0);                    -- writedata
+			SEG_SEG_s1_chipselect                                 : out std_logic;                                        -- chipselect
+			SEG_SWITCH_s1_address                                 : out std_logic_vector(2 downto 0);                     -- address
+			SEG_SWITCH_s1_write                                   : out std_logic;                                        -- write
+			SEG_SWITCH_s1_readdata                                : in  std_logic_vector(31 downto 0) := (others => 'X'); -- readdata
+			SEG_SWITCH_s1_writedata                               : out std_logic_vector(31 downto 0);                    -- writedata
+			SEG_SWITCH_s1_chipselect                              : out std_logic;                                        -- chipselect
 			SW_s1_address                                         : out std_logic_vector(1 downto 0);                     -- address
 			SW_s1_readdata                                        : in  std_logic_vector(31 downto 0) := (others => 'X'); -- readdata
 			sysid_qsys_0_control_slave_address                    : out std_logic_vector(0 downto 0);                     -- address
@@ -337,7 +375,7 @@ architecture rtl of tutorial01 is
 		);
 	end component tutorial01_rst_controller_001;
 
-	signal pll_c0_clk                                                      : std_logic;                     -- PLL:c0 -> [CPU:clk, LED:clk, RAM:clk, SW:clk, irq_mapper:clk, jtag_uart_0:clk, mm_interconnect_0:PLL_c0_clk, rst_controller:clk, sysid_qsys_0:clock]
+	signal pll_c0_clk                                                      : std_logic;                     -- PLL:c0 -> [CPU:clk, LED:clk, RAM:clk, SEG_SEG:clk, SEG_SWITCH:clk, SW:clk, irq_mapper:clk, jtag_uart_0:clk, mm_interconnect_0:PLL_c0_clk, rst_controller:clk, sysid_qsys_0:clock]
 	signal cpu_data_master_readdata                                        : std_logic_vector(31 downto 0); -- mm_interconnect_0:CPU_data_master_readdata -> CPU:d_readdata
 	signal cpu_data_master_waitrequest                                     : std_logic;                     -- mm_interconnect_0:CPU_data_master_waitrequest -> CPU:d_waitrequest
 	signal cpu_data_master_debugaccess                                     : std_logic;                     -- CPU:debug_mem_slave_debugaccess_to_roms -> mm_interconnect_0:CPU_data_master_debugaccess
@@ -386,6 +424,16 @@ architecture rtl of tutorial01 is
 	signal mm_interconnect_0_led_s1_writedata                              : std_logic_vector(31 downto 0); -- mm_interconnect_0:LED_s1_writedata -> LED:writedata
 	signal mm_interconnect_0_sw_s1_readdata                                : std_logic_vector(31 downto 0); -- SW:readdata -> mm_interconnect_0:SW_s1_readdata
 	signal mm_interconnect_0_sw_s1_address                                 : std_logic_vector(1 downto 0);  -- mm_interconnect_0:SW_s1_address -> SW:address
+	signal mm_interconnect_0_seg_switch_s1_chipselect                      : std_logic;                     -- mm_interconnect_0:SEG_SWITCH_s1_chipselect -> SEG_SWITCH:chipselect
+	signal mm_interconnect_0_seg_switch_s1_readdata                        : std_logic_vector(31 downto 0); -- SEG_SWITCH:readdata -> mm_interconnect_0:SEG_SWITCH_s1_readdata
+	signal mm_interconnect_0_seg_switch_s1_address                         : std_logic_vector(2 downto 0);  -- mm_interconnect_0:SEG_SWITCH_s1_address -> SEG_SWITCH:address
+	signal mm_interconnect_0_seg_switch_s1_write                           : std_logic;                     -- mm_interconnect_0:SEG_SWITCH_s1_write -> mm_interconnect_0_seg_switch_s1_write:in
+	signal mm_interconnect_0_seg_switch_s1_writedata                       : std_logic_vector(31 downto 0); -- mm_interconnect_0:SEG_SWITCH_s1_writedata -> SEG_SWITCH:writedata
+	signal mm_interconnect_0_seg_seg_s1_chipselect                         : std_logic;                     -- mm_interconnect_0:SEG_SEG_s1_chipselect -> SEG_SEG:chipselect
+	signal mm_interconnect_0_seg_seg_s1_readdata                           : std_logic_vector(31 downto 0); -- SEG_SEG:readdata -> mm_interconnect_0:SEG_SEG_s1_readdata
+	signal mm_interconnect_0_seg_seg_s1_address                            : std_logic_vector(2 downto 0);  -- mm_interconnect_0:SEG_SEG_s1_address -> SEG_SEG:address
+	signal mm_interconnect_0_seg_seg_s1_write                              : std_logic;                     -- mm_interconnect_0:SEG_SEG_s1_write -> mm_interconnect_0_seg_seg_s1_write:in
+	signal mm_interconnect_0_seg_seg_s1_writedata                          : std_logic_vector(31 downto 0); -- mm_interconnect_0:SEG_SEG_s1_writedata -> SEG_SEG:writedata
 	signal irq_mapper_receiver0_irq                                        : std_logic;                     -- jtag_uart_0:av_irq -> irq_mapper:receiver0_irq
 	signal cpu_irq_irq                                                     : std_logic_vector(31 downto 0); -- irq_mapper:sender_irq -> CPU:irq
 	signal rst_controller_reset_out_reset                                  : std_logic;                     -- rst_controller:reset_out -> [RAM:reset, irq_mapper:reset, mm_interconnect_0:CPU_reset_reset_bridge_in_reset_reset, rst_controller_reset_out_reset:in, rst_translator:in_reset]
@@ -395,7 +443,9 @@ architecture rtl of tutorial01 is
 	signal mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_read_ports_inv  : std_logic;                     -- mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_read:inv -> jtag_uart_0:av_read_n
 	signal mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_write_ports_inv : std_logic;                     -- mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_write:inv -> jtag_uart_0:av_write_n
 	signal mm_interconnect_0_led_s1_write_ports_inv                        : std_logic;                     -- mm_interconnect_0_led_s1_write:inv -> LED:write_n
-	signal rst_controller_reset_out_reset_ports_inv                        : std_logic;                     -- rst_controller_reset_out_reset:inv -> [CPU:reset_n, LED:reset_n, SW:reset_n, jtag_uart_0:rst_n, sysid_qsys_0:reset_n]
+	signal mm_interconnect_0_seg_switch_s1_write_ports_inv                 : std_logic;                     -- mm_interconnect_0_seg_switch_s1_write:inv -> SEG_SWITCH:write_n
+	signal mm_interconnect_0_seg_seg_s1_write_ports_inv                    : std_logic;                     -- mm_interconnect_0_seg_seg_s1_write:inv -> SEG_SEG:write_n
+	signal rst_controller_reset_out_reset_ports_inv                        : std_logic;                     -- rst_controller_reset_out_reset:inv -> [CPU:reset_n, LED:reset_n, SEG_SEG:reset_n, SEG_SWITCH:reset_n, SW:reset_n, jtag_uart_0:rst_n, sysid_qsys_0:reset_n]
 
 begin
 
@@ -484,6 +534,30 @@ begin
 			freeze     => '0'                                  -- (terminated)
 		);
 
+	seg_seg : component tutorial01_SEG_SEG
+		port map (
+			clk        => pll_c0_clk,                                   --                 clk.clk
+			reset_n    => rst_controller_reset_out_reset_ports_inv,     --               reset.reset_n
+			address    => mm_interconnect_0_seg_seg_s1_address,         --                  s1.address
+			write_n    => mm_interconnect_0_seg_seg_s1_write_ports_inv, --                    .write_n
+			writedata  => mm_interconnect_0_seg_seg_s1_writedata,       --                    .writedata
+			chipselect => mm_interconnect_0_seg_seg_s1_chipselect,      --                    .chipselect
+			readdata   => mm_interconnect_0_seg_seg_s1_readdata,        --                    .readdata
+			out_port   => seg_seg_export                                -- external_connection.export
+		);
+
+	seg_switch : component tutorial01_SEG_SWITCH
+		port map (
+			clk        => pll_c0_clk,                                      --                 clk.clk
+			reset_n    => rst_controller_reset_out_reset_ports_inv,        --               reset.reset_n
+			address    => mm_interconnect_0_seg_switch_s1_address,         --                  s1.address
+			write_n    => mm_interconnect_0_seg_switch_s1_write_ports_inv, --                    .write_n
+			writedata  => mm_interconnect_0_seg_switch_s1_writedata,       --                    .writedata
+			chipselect => mm_interconnect_0_seg_switch_s1_chipselect,      --                    .chipselect
+			readdata   => mm_interconnect_0_seg_switch_s1_readdata,        --                    .readdata
+			out_port   => seg_sw_export                                    -- external_connection.export
+		);
+
 	sw : component tutorial01_SW
 		port map (
 			clk      => pll_c0_clk,                               --                 clk.clk
@@ -565,6 +639,16 @@ begin
 			RAM_s1_byteenable                                     => mm_interconnect_0_ram_s1_byteenable,                         --                                                .byteenable
 			RAM_s1_chipselect                                     => mm_interconnect_0_ram_s1_chipselect,                         --                                                .chipselect
 			RAM_s1_clken                                          => mm_interconnect_0_ram_s1_clken,                              --                                                .clken
+			SEG_SEG_s1_address                                    => mm_interconnect_0_seg_seg_s1_address,                        --                                      SEG_SEG_s1.address
+			SEG_SEG_s1_write                                      => mm_interconnect_0_seg_seg_s1_write,                          --                                                .write
+			SEG_SEG_s1_readdata                                   => mm_interconnect_0_seg_seg_s1_readdata,                       --                                                .readdata
+			SEG_SEG_s1_writedata                                  => mm_interconnect_0_seg_seg_s1_writedata,                      --                                                .writedata
+			SEG_SEG_s1_chipselect                                 => mm_interconnect_0_seg_seg_s1_chipselect,                     --                                                .chipselect
+			SEG_SWITCH_s1_address                                 => mm_interconnect_0_seg_switch_s1_address,                     --                                   SEG_SWITCH_s1.address
+			SEG_SWITCH_s1_write                                   => mm_interconnect_0_seg_switch_s1_write,                       --                                                .write
+			SEG_SWITCH_s1_readdata                                => mm_interconnect_0_seg_switch_s1_readdata,                    --                                                .readdata
+			SEG_SWITCH_s1_writedata                               => mm_interconnect_0_seg_switch_s1_writedata,                   --                                                .writedata
+			SEG_SWITCH_s1_chipselect                              => mm_interconnect_0_seg_switch_s1_chipselect,                  --                                                .chipselect
 			SW_s1_address                                         => mm_interconnect_0_sw_s1_address,                             --                                           SW_s1.address
 			SW_s1_readdata                                        => mm_interconnect_0_sw_s1_readdata,                            --                                                .readdata
 			sysid_qsys_0_control_slave_address                    => mm_interconnect_0_sysid_qsys_0_control_slave_address,        --                      sysid_qsys_0_control_slave.address
@@ -716,6 +800,10 @@ begin
 	mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_write_ports_inv <= not mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_write;
 
 	mm_interconnect_0_led_s1_write_ports_inv <= not mm_interconnect_0_led_s1_write;
+
+	mm_interconnect_0_seg_switch_s1_write_ports_inv <= not mm_interconnect_0_seg_switch_s1_write;
+
+	mm_interconnect_0_seg_seg_s1_write_ports_inv <= not mm_interconnect_0_seg_seg_s1_write;
 
 	rst_controller_reset_out_reset_ports_inv <= not rst_controller_reset_out_reset;
 

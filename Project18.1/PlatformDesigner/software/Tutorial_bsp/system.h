@@ -4,7 +4,7 @@
  * Machine generated for CPU 'CPU' in SOPC Builder design 'tutorial01'
  * SOPC Builder design path: ../../tutorial01.sopcinfo
  *
- * Generated: Wed Jul 29 23:42:50 CEST 2020
+ * Generated: Thu Jul 30 23:00:41 CEST 2020
  */
 
 /*
@@ -147,7 +147,7 @@
  */
 
 #define ALT_MODULE_CLASS_LED altera_avalon_pio
-#define LED_BASE 0x11000
+#define LED_BASE 0x11040
 #define LED_BIT_CLEARING_EDGE_REGISTER 0
 #define LED_BIT_MODIFYING_OUTPUT_REGISTER 1
 #define LED_CAPTURE 0
@@ -174,7 +174,7 @@
  */
 
 #define ALT_MODULE_CLASS_PLL altpll
-#define PLL_BASE 0x11030
+#define PLL_BASE 0x11070
 #define PLL_IRQ -1
 #define PLL_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define PLL_NAME "/dev/PLL"
@@ -212,12 +212,66 @@
 
 
 /*
+ * SEG_SEG configuration
+ *
+ */
+
+#define ALT_MODULE_CLASS_SEG_SEG altera_avalon_pio
+#define SEG_SEG_BASE 0x11000
+#define SEG_SEG_BIT_CLEARING_EDGE_REGISTER 0
+#define SEG_SEG_BIT_MODIFYING_OUTPUT_REGISTER 1
+#define SEG_SEG_CAPTURE 0
+#define SEG_SEG_DATA_WIDTH 8
+#define SEG_SEG_DO_TEST_BENCH_WIRING 0
+#define SEG_SEG_DRIVEN_SIM_VALUE 0
+#define SEG_SEG_EDGE_TYPE "NONE"
+#define SEG_SEG_FREQ 50000000
+#define SEG_SEG_HAS_IN 0
+#define SEG_SEG_HAS_OUT 1
+#define SEG_SEG_HAS_TRI 0
+#define SEG_SEG_IRQ -1
+#define SEG_SEG_IRQ_INTERRUPT_CONTROLLER_ID -1
+#define SEG_SEG_IRQ_TYPE "NONE"
+#define SEG_SEG_NAME "/dev/SEG_SEG"
+#define SEG_SEG_RESET_VALUE 0
+#define SEG_SEG_SPAN 32
+#define SEG_SEG_TYPE "altera_avalon_pio"
+
+
+/*
+ * SEG_SWITCH configuration
+ *
+ */
+
+#define ALT_MODULE_CLASS_SEG_SWITCH altera_avalon_pio
+#define SEG_SWITCH_BASE 0x11020
+#define SEG_SWITCH_BIT_CLEARING_EDGE_REGISTER 0
+#define SEG_SWITCH_BIT_MODIFYING_OUTPUT_REGISTER 1
+#define SEG_SWITCH_CAPTURE 0
+#define SEG_SWITCH_DATA_WIDTH 4
+#define SEG_SWITCH_DO_TEST_BENCH_WIRING 0
+#define SEG_SWITCH_DRIVEN_SIM_VALUE 0
+#define SEG_SWITCH_EDGE_TYPE "NONE"
+#define SEG_SWITCH_FREQ 50000000
+#define SEG_SWITCH_HAS_IN 0
+#define SEG_SWITCH_HAS_OUT 1
+#define SEG_SWITCH_HAS_TRI 0
+#define SEG_SWITCH_IRQ -1
+#define SEG_SWITCH_IRQ_INTERRUPT_CONTROLLER_ID -1
+#define SEG_SWITCH_IRQ_TYPE "NONE"
+#define SEG_SWITCH_NAME "/dev/SEG_SWITCH"
+#define SEG_SWITCH_RESET_VALUE 0
+#define SEG_SWITCH_SPAN 32
+#define SEG_SWITCH_TYPE "altera_avalon_pio"
+
+
+/*
  * SW configuration
  *
  */
 
 #define ALT_MODULE_CLASS_SW altera_avalon_pio
-#define SW_BASE 0x11020
+#define SW_BASE 0x11060
 #define SW_BIT_CLEARING_EDGE_REGISTER 0
 #define SW_BIT_MODIFYING_OUTPUT_REGISTER 0
 #define SW_CAPTURE 0
@@ -254,19 +308,19 @@
 #define ALT_NUM_INTERNAL_INTERRUPT_CONTROLLERS 1
 #define ALT_NUM_INTERRUPT_CONTROLLERS 1
 #define ALT_STDERR "/dev/jtag_uart_0"
-#define ALT_STDERR_BASE 0x11048
+#define ALT_STDERR_BASE 0x11088
 #define ALT_STDERR_DEV jtag_uart_0
 #define ALT_STDERR_IS_JTAG_UART
 #define ALT_STDERR_PRESENT
 #define ALT_STDERR_TYPE "altera_avalon_jtag_uart"
 #define ALT_STDIN "/dev/jtag_uart_0"
-#define ALT_STDIN_BASE 0x11048
+#define ALT_STDIN_BASE 0x11088
 #define ALT_STDIN_DEV jtag_uart_0
 #define ALT_STDIN_IS_JTAG_UART
 #define ALT_STDIN_PRESENT
 #define ALT_STDIN_TYPE "altera_avalon_jtag_uart"
 #define ALT_STDOUT "/dev/jtag_uart_0"
-#define ALT_STDOUT_BASE 0x11048
+#define ALT_STDOUT_BASE 0x11088
 #define ALT_STDOUT_DEV jtag_uart_0
 #define ALT_STDOUT_IS_JTAG_UART
 #define ALT_STDOUT_PRESENT
@@ -291,7 +345,7 @@
  */
 
 #define ALT_MODULE_CLASS_jtag_uart_0 altera_avalon_jtag_uart
-#define JTAG_UART_0_BASE 0x11048
+#define JTAG_UART_0_BASE 0x11088
 #define JTAG_UART_0_IRQ 0
 #define JTAG_UART_0_IRQ_INTERRUPT_CONTROLLER_ID 0
 #define JTAG_UART_0_NAME "/dev/jtag_uart_0"
@@ -309,13 +363,13 @@
  */
 
 #define ALT_MODULE_CLASS_sysid_qsys_0 altera_avalon_sysid_qsys
-#define SYSID_QSYS_0_BASE 0x11040
+#define SYSID_QSYS_0_BASE 0x11080
 #define SYSID_QSYS_0_ID 305419896
 #define SYSID_QSYS_0_IRQ -1
 #define SYSID_QSYS_0_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define SYSID_QSYS_0_NAME "/dev/sysid_qsys_0"
 #define SYSID_QSYS_0_SPAN 8
-#define SYSID_QSYS_0_TIMESTAMP 1596058758
+#define SYSID_QSYS_0_TIMESTAMP 1596138375
 #define SYSID_QSYS_0_TYPE "altera_avalon_sysid_qsys"
 
 #endif /* __SYSTEM_H_ */
