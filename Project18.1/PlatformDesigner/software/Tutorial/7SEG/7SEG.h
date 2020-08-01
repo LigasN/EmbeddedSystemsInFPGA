@@ -18,7 +18,13 @@
 #define FALSE 0
 #define TRUE 1
 
+/// Digits to display on 7SEG displays
+/// Lower index == display more to the left side of board
+volatile uint8_t displayData[4];
+
+/// Dots to display on 7SEG displays
+volatile uint8_t dot;
+
 void refreshDisplay();
-void refreshNumbers();
 
 #endif //_7SEG_H_

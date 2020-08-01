@@ -77,10 +77,10 @@ set_location_assignment PIN_B15 -to sw_export[2]
 set_global_assignment -name EXTERNAL_FLASH_FALLBACK_ADDRESS 00000000
 set_global_assignment -name INTERNAL_FLASH_UPDATE_MODE "SINGLE IMAGE"
 set_global_assignment -name QIP_FILE PlatformDesigner/tutorial01/synthesis/tutorial01.qip
-set_location_assignment PIN_D16 -to seg_sw_export[0]
-set_location_assignment PIN_D15 -to seg_sw_export[1]
-set_location_assignment PIN_E16 -to seg_sw_export[2]
-set_location_assignment PIN_E15 -to seg_sw_export[3]
+set_location_assignment PIN_E15 -to seg_sw_export[0]
+set_location_assignment PIN_E16 -to seg_sw_export[1]
+set_location_assignment PIN_D15 -to seg_sw_export[2]
+set_location_assignment PIN_D16 -to seg_sw_export[3]
 set_location_assignment PIN_L16 -to seg_seg_export[0]
 set_location_assignment PIN_J15 -to seg_seg_export[1]
 set_location_assignment PIN_J16 -to seg_seg_export[2]
