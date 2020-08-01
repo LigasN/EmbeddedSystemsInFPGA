@@ -53,7 +53,7 @@
    {
       datum baseAddress
       {
-         value = "69696";
+         value = "69728";
          type = "String";
       }
    }
@@ -69,7 +69,7 @@
    {
       datum baseAddress
       {
-         value = "69744";
+         value = "69776";
          type = "String";
       }
    }
@@ -101,7 +101,7 @@
    {
       datum baseAddress
       {
-         value = "69632";
+         value = "69664";
          type = "String";
       }
    }
@@ -117,7 +117,7 @@
    {
       datum baseAddress
       {
-         value = "69664";
+         value = "69696";
          type = "String";
       }
    }
@@ -133,7 +133,23 @@
    {
       datum baseAddress
       {
-         value = "69728";
+         value = "69760";
+         type = "String";
+      }
+   }
+   element TIMER0
+   {
+      datum _sortIndex
+      {
+         value = "10";
+         type = "int";
+      }
+   }
+   element TIMER0.s1
+   {
+      datum baseAddress
+      {
+         value = "69632";
          type = "String";
       }
    }
@@ -149,7 +165,7 @@
    {
       datum baseAddress
       {
-         value = "69768";
+         value = "69800";
          type = "String";
       }
    }
@@ -165,7 +181,7 @@
    {
       datum baseAddress
       {
-         value = "69760";
+         value = "69792";
          type = "String";
       }
    }
@@ -234,7 +250,7 @@
   <parameter name="dataAddrWidth" value="17" />
   <parameter name="dataMasterHighPerformanceAddrWidth" value="1" />
   <parameter name="dataMasterHighPerformanceMapParam" value="" />
-  <parameter name="dataSlaveMapParam"><![CDATA[<address-map><slave name='RAM.s1' start='0x8000' end='0x10000' type='altera_avalon_onchip_memory2.s1' /><slave name='CPU.debug_mem_slave' start='0x10800' end='0x11000' type='altera_nios2_gen2.debug_mem_slave' /><slave name='SEG_SEG.s1' start='0x11000' end='0x11020' type='altera_avalon_pio.s1' /><slave name='SEG_SWITCH.s1' start='0x11020' end='0x11040' type='altera_avalon_pio.s1' /><slave name='LED.s1' start='0x11040' end='0x11060' type='altera_avalon_pio.s1' /><slave name='SW.s1' start='0x11060' end='0x11070' type='altera_avalon_pio.s1' /><slave name='PLL.pll_slave' start='0x11070' end='0x11080' type='altpll.pll_slave' /><slave name='sysid_qsys_0.control_slave' start='0x11080' end='0x11088' type='altera_avalon_sysid_qsys.control_slave' /><slave name='jtag_uart_0.avalon_jtag_slave' start='0x11088' end='0x11090' type='altera_avalon_jtag_uart.avalon_jtag_slave' /></address-map>]]></parameter>
+  <parameter name="dataSlaveMapParam"><![CDATA[<address-map><slave name='RAM.s1' start='0x8000' end='0x10000' type='altera_avalon_onchip_memory2.s1' /><slave name='CPU.debug_mem_slave' start='0x10800' end='0x11000' type='altera_nios2_gen2.debug_mem_slave' /><slave name='TIMER0.s1' start='0x11000' end='0x11020' type='altera_avalon_timer.s1' /><slave name='SEG_SEG.s1' start='0x11020' end='0x11040' type='altera_avalon_pio.s1' /><slave name='SEG_SWITCH.s1' start='0x11040' end='0x11060' type='altera_avalon_pio.s1' /><slave name='LED.s1' start='0x11060' end='0x11080' type='altera_avalon_pio.s1' /><slave name='SW.s1' start='0x11080' end='0x11090' type='altera_avalon_pio.s1' /><slave name='PLL.pll_slave' start='0x11090' end='0x110A0' type='altpll.pll_slave' /><slave name='sysid_qsys_0.control_slave' start='0x110A0' end='0x110A8' type='altera_avalon_sysid_qsys.control_slave' /><slave name='jtag_uart_0.avalon_jtag_slave' start='0x110A8' end='0x110B0' type='altera_avalon_jtag_uart.avalon_jtag_slave' /></address-map>]]></parameter>
   <parameter name="data_master_high_performance_paddr_base" value="0" />
   <parameter name="data_master_high_performance_paddr_size" value="0" />
   <parameter name="data_master_paddr_base" value="0" />
@@ -280,7 +296,7 @@
   <parameter name="instruction_master_high_performance_paddr_size" value="0" />
   <parameter name="instruction_master_paddr_base" value="0" />
   <parameter name="instruction_master_paddr_size" value="0" />
-  <parameter name="internalIrqMaskSystemInfo" value="1" />
+  <parameter name="internalIrqMaskSystemInfo" value="3" />
   <parameter name="io_regionbase" value="0" />
   <parameter name="io_regionsize" value="0" />
   <parameter name="master_addr_map" value="false" />
@@ -647,6 +663,18 @@
   <parameter name="simDrivenValue" value="0" />
   <parameter name="width" value="3" />
  </module>
+ <module name="TIMER0" kind="altera_avalon_timer" version="18.1" enabled="1">
+  <parameter name="alwaysRun" value="false" />
+  <parameter name="counterSize" value="32" />
+  <parameter name="fixedPeriod" value="false" />
+  <parameter name="period" value="1" />
+  <parameter name="periodUnits" value="MSEC" />
+  <parameter name="resetOutput" value="false" />
+  <parameter name="snapshot" value="true" />
+  <parameter name="systemFrequency" value="50000000" />
+  <parameter name="timeoutPulseOutput" value="false" />
+  <parameter name="watchdogPulse" value="2" />
+ </module>
  <module
    name="jtag_uart_0"
    kind="altera_avalon_jtag_uart"
@@ -679,7 +707,7 @@
    start="CPU.data_master"
    end="jtag_uart_0.avalon_jtag_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00011088" />
+  <parameter name="baseAddress" value="0x000110a8" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -688,7 +716,7 @@
    start="CPU.data_master"
    end="sysid_qsys_0.control_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00011080" />
+  <parameter name="baseAddress" value="0x000110a0" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -706,7 +734,7 @@
    start="CPU.data_master"
    end="PLL.pll_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00011070" />
+  <parameter name="baseAddress" value="0x00011090" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection kind="avalon" version="18.1" start="CPU.data_master" end="RAM.s1">
@@ -716,12 +744,12 @@
  </connection>
  <connection kind="avalon" version="18.1" start="CPU.data_master" end="LED.s1">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00011040" />
+  <parameter name="baseAddress" value="0x00011060" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection kind="avalon" version="18.1" start="CPU.data_master" end="SW.s1">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00011060" />
+  <parameter name="baseAddress" value="0x00011080" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -730,10 +758,15 @@
    start="CPU.data_master"
    end="SEG_SWITCH.s1">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00011020" />
+  <parameter name="baseAddress" value="0x00011040" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection kind="avalon" version="18.1" start="CPU.data_master" end="SEG_SEG.s1">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x00011020" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection kind="avalon" version="18.1" start="CPU.data_master" end="TIMER0.s1">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x00011000" />
   <parameter name="defaultConnection" value="false" />
@@ -763,10 +796,14 @@
  <connection kind="clock" version="18.1" start="PLL.c0" end="SW.clk" />
  <connection kind="clock" version="18.1" start="PLL.c0" end="SEG_SWITCH.clk" />
  <connection kind="clock" version="18.1" start="PLL.c0" end="SEG_SEG.clk" />
+ <connection kind="clock" version="18.1" start="PLL.c0" end="TIMER0.clk" />
  <connection kind="clock" version="18.1" start="PLL.c0" end="RAM.clk1" />
  <connection kind="clock" version="18.1" start="CLK.clk" end="PLL.inclk_interface" />
  <connection kind="interrupt" version="18.1" start="CPU.irq" end="jtag_uart_0.irq">
   <parameter name="irqNumber" value="0" />
+ </connection>
+ <connection kind="interrupt" version="18.1" start="CPU.irq" end="TIMER0.irq">
+  <parameter name="irqNumber" value="1" />
  </connection>
  <connection
    kind="reset"
@@ -792,6 +829,7 @@
    start="CLK.clk_reset"
    end="SEG_SWITCH.reset" />
  <connection kind="reset" version="18.1" start="CLK.clk_reset" end="SEG_SEG.reset" />
+ <connection kind="reset" version="18.1" start="CLK.clk_reset" end="TIMER0.reset" />
  <connection kind="reset" version="18.1" start="CLK.clk_reset" end="RAM.reset1" />
  <interconnectRequirement for="$system" name="qsys_mm.clockCrossingAdapter" value="HANDSHAKE" />
  <interconnectRequirement for="$system" name="qsys_mm.enableEccProtection" value="FALSE" />

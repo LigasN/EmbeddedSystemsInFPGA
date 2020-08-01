@@ -143,6 +143,19 @@ architecture rtl of tutorial01 is
 		);
 	end component tutorial01_SW;
 
+	component tutorial01_TIMER0 is
+		port (
+			clk        : in  std_logic                     := 'X';             -- clk
+			reset_n    : in  std_logic                     := 'X';             -- reset_n
+			address    : in  std_logic_vector(2 downto 0)  := (others => 'X'); -- address
+			writedata  : in  std_logic_vector(15 downto 0) := (others => 'X'); -- writedata
+			readdata   : out std_logic_vector(15 downto 0);                    -- readdata
+			chipselect : in  std_logic                     := 'X';             -- chipselect
+			write_n    : in  std_logic                     := 'X';             -- write_n
+			irq        : out std_logic                                         -- irq
+		);
+	end component tutorial01_TIMER0;
+
 	component tutorial01_jtag_uart_0 is
 		port (
 			clk            : in  std_logic                     := 'X';             -- clk
@@ -230,7 +243,12 @@ architecture rtl of tutorial01 is
 			SW_s1_address                                         : out std_logic_vector(1 downto 0);                     -- address
 			SW_s1_readdata                                        : in  std_logic_vector(31 downto 0) := (others => 'X'); -- readdata
 			sysid_qsys_0_control_slave_address                    : out std_logic_vector(0 downto 0);                     -- address
-			sysid_qsys_0_control_slave_readdata                   : in  std_logic_vector(31 downto 0) := (others => 'X')  -- readdata
+			sysid_qsys_0_control_slave_readdata                   : in  std_logic_vector(31 downto 0) := (others => 'X'); -- readdata
+			TIMER0_s1_address                                     : out std_logic_vector(2 downto 0);                     -- address
+			TIMER0_s1_write                                       : out std_logic;                                        -- write
+			TIMER0_s1_readdata                                    : in  std_logic_vector(15 downto 0) := (others => 'X'); -- readdata
+			TIMER0_s1_writedata                                   : out std_logic_vector(15 downto 0);                    -- writedata
+			TIMER0_s1_chipselect                                  : out std_logic                                         -- chipselect
 		);
 	end component tutorial01_mm_interconnect_0;
 
@@ -239,6 +257,7 @@ architecture rtl of tutorial01 is
 			clk           : in  std_logic                     := 'X'; -- clk
 			reset         : in  std_logic                     := 'X'; -- reset
 			receiver0_irq : in  std_logic                     := 'X'; -- irq
+			receiver1_irq : in  std_logic                     := 'X'; -- irq
 			sender_irq    : out std_logic_vector(31 downto 0)         -- irq
 		);
 	end component tutorial01_irq_mapper;
@@ -375,7 +394,7 @@ architecture rtl of tutorial01 is
 		);
 	end component tutorial01_rst_controller_001;
 
-	signal pll_c0_clk                                                      : std_logic;                     -- PLL:c0 -> [CPU:clk, LED:clk, RAM:clk, SEG_SEG:clk, SEG_SWITCH:clk, SW:clk, irq_mapper:clk, jtag_uart_0:clk, mm_interconnect_0:PLL_c0_clk, rst_controller:clk, sysid_qsys_0:clock]
+	signal pll_c0_clk                                                      : std_logic;                     -- PLL:c0 -> [CPU:clk, LED:clk, RAM:clk, SEG_SEG:clk, SEG_SWITCH:clk, SW:clk, TIMER0:clk, irq_mapper:clk, jtag_uart_0:clk, mm_interconnect_0:PLL_c0_clk, rst_controller:clk, sysid_qsys_0:clock]
 	signal cpu_data_master_readdata                                        : std_logic_vector(31 downto 0); -- mm_interconnect_0:CPU_data_master_readdata -> CPU:d_readdata
 	signal cpu_data_master_waitrequest                                     : std_logic;                     -- mm_interconnect_0:CPU_data_master_waitrequest -> CPU:d_waitrequest
 	signal cpu_data_master_debugaccess                                     : std_logic;                     -- CPU:debug_mem_slave_debugaccess_to_roms -> mm_interconnect_0:CPU_data_master_debugaccess
@@ -434,7 +453,13 @@ architecture rtl of tutorial01 is
 	signal mm_interconnect_0_seg_seg_s1_address                            : std_logic_vector(2 downto 0);  -- mm_interconnect_0:SEG_SEG_s1_address -> SEG_SEG:address
 	signal mm_interconnect_0_seg_seg_s1_write                              : std_logic;                     -- mm_interconnect_0:SEG_SEG_s1_write -> mm_interconnect_0_seg_seg_s1_write:in
 	signal mm_interconnect_0_seg_seg_s1_writedata                          : std_logic_vector(31 downto 0); -- mm_interconnect_0:SEG_SEG_s1_writedata -> SEG_SEG:writedata
+	signal mm_interconnect_0_timer0_s1_chipselect                          : std_logic;                     -- mm_interconnect_0:TIMER0_s1_chipselect -> TIMER0:chipselect
+	signal mm_interconnect_0_timer0_s1_readdata                            : std_logic_vector(15 downto 0); -- TIMER0:readdata -> mm_interconnect_0:TIMER0_s1_readdata
+	signal mm_interconnect_0_timer0_s1_address                             : std_logic_vector(2 downto 0);  -- mm_interconnect_0:TIMER0_s1_address -> TIMER0:address
+	signal mm_interconnect_0_timer0_s1_write                               : std_logic;                     -- mm_interconnect_0:TIMER0_s1_write -> mm_interconnect_0_timer0_s1_write:in
+	signal mm_interconnect_0_timer0_s1_writedata                           : std_logic_vector(15 downto 0); -- mm_interconnect_0:TIMER0_s1_writedata -> TIMER0:writedata
 	signal irq_mapper_receiver0_irq                                        : std_logic;                     -- jtag_uart_0:av_irq -> irq_mapper:receiver0_irq
+	signal irq_mapper_receiver1_irq                                        : std_logic;                     -- TIMER0:irq -> irq_mapper:receiver1_irq
 	signal cpu_irq_irq                                                     : std_logic_vector(31 downto 0); -- irq_mapper:sender_irq -> CPU:irq
 	signal rst_controller_reset_out_reset                                  : std_logic;                     -- rst_controller:reset_out -> [RAM:reset, irq_mapper:reset, mm_interconnect_0:CPU_reset_reset_bridge_in_reset_reset, rst_controller_reset_out_reset:in, rst_translator:in_reset]
 	signal rst_controller_reset_out_reset_req                              : std_logic;                     -- rst_controller:reset_req -> [CPU:reset_req, RAM:reset_req, rst_translator:reset_req_in]
@@ -445,7 +470,8 @@ architecture rtl of tutorial01 is
 	signal mm_interconnect_0_led_s1_write_ports_inv                        : std_logic;                     -- mm_interconnect_0_led_s1_write:inv -> LED:write_n
 	signal mm_interconnect_0_seg_switch_s1_write_ports_inv                 : std_logic;                     -- mm_interconnect_0_seg_switch_s1_write:inv -> SEG_SWITCH:write_n
 	signal mm_interconnect_0_seg_seg_s1_write_ports_inv                    : std_logic;                     -- mm_interconnect_0_seg_seg_s1_write:inv -> SEG_SEG:write_n
-	signal rst_controller_reset_out_reset_ports_inv                        : std_logic;                     -- rst_controller_reset_out_reset:inv -> [CPU:reset_n, LED:reset_n, SEG_SEG:reset_n, SEG_SWITCH:reset_n, SW:reset_n, jtag_uart_0:rst_n, sysid_qsys_0:reset_n]
+	signal mm_interconnect_0_timer0_s1_write_ports_inv                     : std_logic;                     -- mm_interconnect_0_timer0_s1_write:inv -> TIMER0:write_n
+	signal rst_controller_reset_out_reset_ports_inv                        : std_logic;                     -- rst_controller_reset_out_reset:inv -> [CPU:reset_n, LED:reset_n, SEG_SEG:reset_n, SEG_SWITCH:reset_n, SW:reset_n, TIMER0:reset_n, jtag_uart_0:rst_n, sysid_qsys_0:reset_n]
 
 begin
 
@@ -567,6 +593,18 @@ begin
 			in_port  => sw_export                                 -- external_connection.export
 		);
 
+	timer0 : component tutorial01_TIMER0
+		port map (
+			clk        => pll_c0_clk,                                  --   clk.clk
+			reset_n    => rst_controller_reset_out_reset_ports_inv,    -- reset.reset_n
+			address    => mm_interconnect_0_timer0_s1_address,         --    s1.address
+			writedata  => mm_interconnect_0_timer0_s1_writedata,       --      .writedata
+			readdata   => mm_interconnect_0_timer0_s1_readdata,        --      .readdata
+			chipselect => mm_interconnect_0_timer0_s1_chipselect,      --      .chipselect
+			write_n    => mm_interconnect_0_timer0_s1_write_ports_inv, --      .write_n
+			irq        => irq_mapper_receiver1_irq                     --   irq.irq
+		);
+
 	jtag_uart_0 : component tutorial01_jtag_uart_0
 		port map (
 			clk            => pll_c0_clk,                                                      --               clk.clk
@@ -652,7 +690,12 @@ begin
 			SW_s1_address                                         => mm_interconnect_0_sw_s1_address,                             --                                           SW_s1.address
 			SW_s1_readdata                                        => mm_interconnect_0_sw_s1_readdata,                            --                                                .readdata
 			sysid_qsys_0_control_slave_address                    => mm_interconnect_0_sysid_qsys_0_control_slave_address,        --                      sysid_qsys_0_control_slave.address
-			sysid_qsys_0_control_slave_readdata                   => mm_interconnect_0_sysid_qsys_0_control_slave_readdata        --                                                .readdata
+			sysid_qsys_0_control_slave_readdata                   => mm_interconnect_0_sysid_qsys_0_control_slave_readdata,       --                                                .readdata
+			TIMER0_s1_address                                     => mm_interconnect_0_timer0_s1_address,                         --                                       TIMER0_s1.address
+			TIMER0_s1_write                                       => mm_interconnect_0_timer0_s1_write,                           --                                                .write
+			TIMER0_s1_readdata                                    => mm_interconnect_0_timer0_s1_readdata,                        --                                                .readdata
+			TIMER0_s1_writedata                                   => mm_interconnect_0_timer0_s1_writedata,                       --                                                .writedata
+			TIMER0_s1_chipselect                                  => mm_interconnect_0_timer0_s1_chipselect                       --                                                .chipselect
 		);
 
 	irq_mapper : component tutorial01_irq_mapper
@@ -660,6 +703,7 @@ begin
 			clk           => pll_c0_clk,                     --       clk.clk
 			reset         => rst_controller_reset_out_reset, -- clk_reset.reset
 			receiver0_irq => irq_mapper_receiver0_irq,       -- receiver0.irq
+			receiver1_irq => irq_mapper_receiver1_irq,       -- receiver1.irq
 			sender_irq    => cpu_irq_irq                     --    sender.irq
 		);
 
@@ -804,6 +848,8 @@ begin
 	mm_interconnect_0_seg_switch_s1_write_ports_inv <= not mm_interconnect_0_seg_switch_s1_write;
 
 	mm_interconnect_0_seg_seg_s1_write_ports_inv <= not mm_interconnect_0_seg_seg_s1_write;
+
+	mm_interconnect_0_timer0_s1_write_ports_inv <= not mm_interconnect_0_timer0_s1_write;
 
 	rst_controller_reset_out_reset_ports_inv <= not rst_controller_reset_out_reset;
 

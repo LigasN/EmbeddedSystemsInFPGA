@@ -4,7 +4,7 @@
  * Machine generated for CPU 'CPU' in SOPC Builder design 'tutorial01'
  * SOPC Builder design path: ../../tutorial01.sopcinfo
  *
- * Generated: Thu Jul 30 23:00:41 CEST 2020
+ * Generated: Sat Aug 01 21:25:44 CEST 2020
  */
 
 /*
@@ -137,6 +137,7 @@
 #define __ALTERA_AVALON_ONCHIP_MEMORY2
 #define __ALTERA_AVALON_PIO
 #define __ALTERA_AVALON_SYSID_QSYS
+#define __ALTERA_AVALON_TIMER
 #define __ALTERA_NIOS2_GEN2
 #define __ALTPLL
 
@@ -147,7 +148,7 @@
  */
 
 #define ALT_MODULE_CLASS_LED altera_avalon_pio
-#define LED_BASE 0x11040
+#define LED_BASE 0x11060
 #define LED_BIT_CLEARING_EDGE_REGISTER 0
 #define LED_BIT_MODIFYING_OUTPUT_REGISTER 1
 #define LED_CAPTURE 0
@@ -174,7 +175,7 @@
  */
 
 #define ALT_MODULE_CLASS_PLL altpll
-#define PLL_BASE 0x11070
+#define PLL_BASE 0x11090
 #define PLL_IRQ -1
 #define PLL_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define PLL_NAME "/dev/PLL"
@@ -217,7 +218,7 @@
  */
 
 #define ALT_MODULE_CLASS_SEG_SEG altera_avalon_pio
-#define SEG_SEG_BASE 0x11000
+#define SEG_SEG_BASE 0x11020
 #define SEG_SEG_BIT_CLEARING_EDGE_REGISTER 0
 #define SEG_SEG_BIT_MODIFYING_OUTPUT_REGISTER 1
 #define SEG_SEG_CAPTURE 0
@@ -244,7 +245,7 @@
  */
 
 #define ALT_MODULE_CLASS_SEG_SWITCH altera_avalon_pio
-#define SEG_SWITCH_BASE 0x11020
+#define SEG_SWITCH_BASE 0x11040
 #define SEG_SWITCH_BIT_CLEARING_EDGE_REGISTER 0
 #define SEG_SWITCH_BIT_MODIFYING_OUTPUT_REGISTER 1
 #define SEG_SWITCH_CAPTURE 0
@@ -271,7 +272,7 @@
  */
 
 #define ALT_MODULE_CLASS_SW altera_avalon_pio
-#define SW_BASE 0x11060
+#define SW_BASE 0x11080
 #define SW_BIT_CLEARING_EDGE_REGISTER 0
 #define SW_BIT_MODIFYING_OUTPUT_REGISTER 0
 #define SW_CAPTURE 0
@@ -308,24 +309,50 @@
 #define ALT_NUM_INTERNAL_INTERRUPT_CONTROLLERS 1
 #define ALT_NUM_INTERRUPT_CONTROLLERS 1
 #define ALT_STDERR "/dev/jtag_uart_0"
-#define ALT_STDERR_BASE 0x11088
+#define ALT_STDERR_BASE 0x110a8
 #define ALT_STDERR_DEV jtag_uart_0
 #define ALT_STDERR_IS_JTAG_UART
 #define ALT_STDERR_PRESENT
 #define ALT_STDERR_TYPE "altera_avalon_jtag_uart"
 #define ALT_STDIN "/dev/jtag_uart_0"
-#define ALT_STDIN_BASE 0x11088
+#define ALT_STDIN_BASE 0x110a8
 #define ALT_STDIN_DEV jtag_uart_0
 #define ALT_STDIN_IS_JTAG_UART
 #define ALT_STDIN_PRESENT
 #define ALT_STDIN_TYPE "altera_avalon_jtag_uart"
 #define ALT_STDOUT "/dev/jtag_uart_0"
-#define ALT_STDOUT_BASE 0x11088
+#define ALT_STDOUT_BASE 0x110a8
 #define ALT_STDOUT_DEV jtag_uart_0
 #define ALT_STDOUT_IS_JTAG_UART
 #define ALT_STDOUT_PRESENT
 #define ALT_STDOUT_TYPE "altera_avalon_jtag_uart"
 #define ALT_SYSTEM_NAME "tutorial01"
+
+
+/*
+ * TIMER0 configuration
+ *
+ */
+
+#define ALT_MODULE_CLASS_TIMER0 altera_avalon_timer
+#define TIMER0_ALWAYS_RUN 0
+#define TIMER0_BASE 0x11000
+#define TIMER0_COUNTER_SIZE 32
+#define TIMER0_FIXED_PERIOD 0
+#define TIMER0_FREQ 50000000
+#define TIMER0_IRQ 1
+#define TIMER0_IRQ_INTERRUPT_CONTROLLER_ID 0
+#define TIMER0_LOAD_VALUE 49999
+#define TIMER0_MULT 0.001
+#define TIMER0_NAME "/dev/TIMER0"
+#define TIMER0_PERIOD 1
+#define TIMER0_PERIOD_UNITS "ms"
+#define TIMER0_RESET_OUTPUT 0
+#define TIMER0_SNAPSHOT 1
+#define TIMER0_SPAN 32
+#define TIMER0_TICKS_PER_SEC 1000
+#define TIMER0_TIMEOUT_PULSE_OUTPUT 0
+#define TIMER0_TYPE "altera_avalon_timer"
 
 
 /*
@@ -345,7 +372,7 @@
  */
 
 #define ALT_MODULE_CLASS_jtag_uart_0 altera_avalon_jtag_uart
-#define JTAG_UART_0_BASE 0x11088
+#define JTAG_UART_0_BASE 0x110a8
 #define JTAG_UART_0_IRQ 0
 #define JTAG_UART_0_IRQ_INTERRUPT_CONTROLLER_ID 0
 #define JTAG_UART_0_NAME "/dev/jtag_uart_0"
@@ -363,13 +390,13 @@
  */
 
 #define ALT_MODULE_CLASS_sysid_qsys_0 altera_avalon_sysid_qsys
-#define SYSID_QSYS_0_BASE 0x11080
+#define SYSID_QSYS_0_BASE 0x110a0
 #define SYSID_QSYS_0_ID 305419896
 #define SYSID_QSYS_0_IRQ -1
 #define SYSID_QSYS_0_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define SYSID_QSYS_0_NAME "/dev/sysid_qsys_0"
 #define SYSID_QSYS_0_SPAN 8
-#define SYSID_QSYS_0_TIMESTAMP 1596138375
+#define SYSID_QSYS_0_TIMESTAMP 1596309848
 #define SYSID_QSYS_0_TYPE "altera_avalon_sysid_qsys"
 
 #endif /* __SYSTEM_H_ */

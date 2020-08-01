@@ -15,12 +15,10 @@
 
 #define PAUSE 16
 
-#define DS1 1
-#define DS2 2
-#define DS3 3
-#define DS4 4
-#define DS_OFF 0
+#define FALSE 0
+#define TRUE 1
 
-void setDigit(uint8_t digit, uint8_t display, uint8_t dot);
+void refreshDisplay();
+void refreshNumbers();
 
 #endif //_7SEG_H_
