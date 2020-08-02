@@ -1,6 +1,9 @@
+#include <stdio.h>
+
 #include "system.h"
 #include "sys/alt_stdio.h"
 #include "sys/alt_sys_wrappers.h"
+#include "sys/alt_irq.h"
 #include "altera_avalon_pio_regs.h"
 #include "altera_avalon_timer_regs.h"
 #include "altera_avalon_timer.h"
@@ -9,7 +12,7 @@
 #include "7SEG/7SEGExamples.h"
 
 /// Counter of pushing buttons
-volatile uint16_t counter = 0;
+volatile uint16_t msCounter = 0;
 
 /// Timer interupt handler
 void timer0Interrupt( void* context )
@@ -18,26 +21,7 @@ void timer0Interrupt( void* context )
 	IOWR_ALTERA_AVALON_TIMER_STATUS( TIMER0_BASE, 0 );
 	refreshDisplay( );
 
-	static uint16_t msCounter = 0;
-	uint16_t state = IORD_ALTERA_AVALON_PIO_DATA( SW_BASE );
-
-	if( state != 0b111 )
-	{
-		if( msCounter < 50 )
-		{
-			++msCounter;
-		}
-		else if( msCounter == 50 )
-		{
-			++counter;
-			displayDec( counter );
-			++msCounter;
-		}
-	}
-	else
-	{
-		msCounter = 0;
-	}
+	++msCounter;
 }
 
 /// Switch interupt handler
@@ -80,7 +64,26 @@ int main( )
 	/* Event loop never exits. */
 	while( 1 )
 	{
+		if( !(IORD_ALTERA_AVALON_PIO_DATA( SW_BASE ) & (1 << 0)) )
+		{
+			alt_irq_context context = alt_irq_disable_all( );
+			IOWR_ALTERA_AVALON_TIMER_SNAPH( TIMER0_BASE, 0 );
+			uint16_t copyMs = msCounter;
 
+			uint8_t valid = !(IORD_ALTERA_AVALON_TIMER_STATUS( TIMER0_BASE )
+			        & ALTERA_AVALON_TIMER_STATUS_TO_MSK);
+
+			alt_irq_enable_all( context );
+
+			uint32_t timerValue = IORD_ALTERA_AVALON_TIMER_SNAPH( TIMER0_BASE );
+			timerValue <<= 16;
+			timerValue |= IORD_ALTERA_AVALON_TIMER_SNAPL( TIMER0_BASE );
+
+			printf( "T = %u.%03lu ms %c \r\n", copyMs, 999 - timerValue / 50, valid ? ' ' : '*' );
+			displayDec( copyMs );
+			while( !(IORD_ALTERA_AVALON_PIO_DATA( SW_BASE ) & (1 << 0)) )
+				;
+		}
 	}
 
 	return 0;
