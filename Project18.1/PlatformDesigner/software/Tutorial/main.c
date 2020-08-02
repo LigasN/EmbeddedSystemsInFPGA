@@ -8,28 +8,56 @@
 #include "7SEG/7SEG.h"
 #include "7SEG/7SEGExamples.h"
 
+/// Counter of pushing buttons
+volatile uint16_t counter = 0;
+
 /// Timer interupt handler
 void timer0Interrupt( void* context )
 {
+	// Interrupt reset
 	IOWR_ALTERA_AVALON_TIMER_STATUS( TIMER0_BASE, 0 );
 	refreshDisplay( );
-	// countTo9999( );
+
+	static uint16_t msCounter = 0;
+	uint16_t state = IORD_ALTERA_AVALON_PIO_DATA( SW_BASE );
+
+	if( state != 0b111 )
+	{
+		if( msCounter < 50 )
+		{
+			++msCounter;
+		}
+		else if( msCounter == 50 )
+		{
+			++counter;
+			displayDec( counter );
+			++msCounter;
+		}
+	}
+	else
+	{
+		msCounter = 0;
+	}
 }
 
+/// Switch interupt handler
 void SWInterrupt( void* context )
 {
-	static uint16_t counter = 0;
-
+// Interrupt reset
 	IOWR_ALTERA_AVALON_PIO_EDGE_CAP( SW_BASE, 0 );
 
-	++counter;
-	displayDec( counter );
+	//++counter;
+	//displayDec( counter );
 
 }
 
 int main( )
 {
 	alt_putstr( "Hello from Nios II to you people!\n" );
+
+	// Slow down our timer
+	IOWR_ALTERA_AVALON_TIMER_PERIODH( TIMER0_BASE, (50000UL - 1UL) >> 16 );
+	IOWR_ALTERA_AVALON_TIMER_PERIODL( TIMER0_BASE, (50000UL - 1UL) );
 
 	// Registering function to timer irq
 	alt_ic_isr_register( TIMER0_IRQ_INTERRUPT_CONTROLLER_ID, TIMER0_IRQ, timer0Interrupt, NULL,
