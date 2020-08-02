@@ -4,7 +4,7 @@
  * Machine generated for CPU 'CPU' in SOPC Builder design 'tutorial01'
  * SOPC Builder design path: ../../tutorial01.sopcinfo
  *
- * Generated: Sat Aug 01 21:25:44 CEST 2020
+ * Generated: Sun Aug 02 14:38:44 CEST 2020
  */
 
 /*
@@ -275,18 +275,18 @@
 #define SW_BASE 0x11080
 #define SW_BIT_CLEARING_EDGE_REGISTER 0
 #define SW_BIT_MODIFYING_OUTPUT_REGISTER 0
-#define SW_CAPTURE 0
+#define SW_CAPTURE 1
 #define SW_DATA_WIDTH 3
 #define SW_DO_TEST_BENCH_WIRING 0
 #define SW_DRIVEN_SIM_VALUE 0
-#define SW_EDGE_TYPE "NONE"
+#define SW_EDGE_TYPE "FALLING"
 #define SW_FREQ 50000000
 #define SW_HAS_IN 1
 #define SW_HAS_OUT 0
 #define SW_HAS_TRI 0
-#define SW_IRQ -1
-#define SW_IRQ_INTERRUPT_CONTROLLER_ID -1
-#define SW_IRQ_TYPE "NONE"
+#define SW_IRQ 2
+#define SW_IRQ_INTERRUPT_CONTROLLER_ID 0
+#define SW_IRQ_TYPE "EDGE"
 #define SW_NAME "/dev/SW"
 #define SW_RESET_VALUE 0
 #define SW_SPAN 16
@@ -396,7 +396,7 @@
 #define SYSID_QSYS_0_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define SYSID_QSYS_0_NAME "/dev/sysid_qsys_0"
 #define SYSID_QSYS_0_SPAN 8
-#define SYSID_QSYS_0_TIMESTAMP 1596309848
+#define SYSID_QSYS_0_TIMESTAMP 1596371637
 #define SYSID_QSYS_0_TYPE "altera_avalon_sysid_qsys"
 
 #endif /* __SYSTEM_H_ */

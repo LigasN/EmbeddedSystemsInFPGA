@@ -25,6 +25,10 @@ volatile uint8_t displayData[4];
 /// Dots to display on 7SEG displays
 volatile uint8_t dot;
 
+/// Refreshes displays and sets correct data on the current one
 void refreshDisplay();
+
+/// Set displays to display decimal number from 0 up to 9999.
+void displayDec( uint16_t decNumber );
 
 #endif //_7SEG_H_

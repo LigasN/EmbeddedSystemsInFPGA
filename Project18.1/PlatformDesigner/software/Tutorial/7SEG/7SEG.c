@@ -55,3 +55,22 @@ void refreshDisplay( void )
 	else
 		display = 0;
 }
+
+/// Set displays to display decimal number from 0 up to 9999.
+void displayDec( uint16_t decNumber )
+{
+	// Setting numbers to specific displays from decimal one
+	for( uint8_t i = 0; i < 4; ++i )
+	{
+		displayData[i] =  decNumber % 10;
+		decNumber /= 10;
+	}
+
+	// Dot is not allowed here
+	dot = 0;
+
+	// Ready to refresh displays
+	refreshDisplay();
+}
+
+

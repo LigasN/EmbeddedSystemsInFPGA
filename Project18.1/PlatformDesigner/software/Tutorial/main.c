@@ -1,4 +1,3 @@
-
 #include "system.h"
 #include "sys/alt_stdio.h"
 #include "sys/alt_sys_wrappers.h"
@@ -7,74 +6,54 @@
 #include "altera_avalon_timer.h"
 
 #include "7SEG/7SEG.h"
-
-/// Example of counting function. Changes global variable digit and dot
-/// to the next number or dot
-void refreshNumbers()
-{
-	static uint16_t actualNumber = 0;
-	static uint8_t j = 0;
-	static uint8_t jLimit = 10;
-
-	if( j > jLimit )
-	{
-		// Obviously I could update only one number. This function is
-		// called 3 times too much. But then I would need one more static variable
-		// or make displayNumber global. I decided to be in refreshDisplay() more close
-		// to the example from book.
-		uint16_t actualNumberCopy = actualNumber;
-		for( uint8_t i = 0; i < 4; ++i )
-		{
-			displayData[i] =  actualNumberCopy % 10;
-			actualNumberCopy /= 10;
-		}
-
-		// Prepare for the next time
-		if ( actualNumber < 10000 )
-			++actualNumber;
-		else
-			actualNumber = 0;
-
-		// Dots preparing
-		if ( dot < 4 )
-			++dot;
-		else
-			dot = 0;
-
-		j = 0;
-	}
-	else
-		++j;
-
-}
+#include "7SEG/7SEGExamples.h"
 
 /// Timer interupt handler
-void timer0Interrupt(void* context)
+void timer0Interrupt( void* context )
 {
-		IOWR_ALTERA_AVALON_TIMER_STATUS( TIMER0_BASE, 0 );
-		refreshDisplay();
-		refreshNumbers();
+	IOWR_ALTERA_AVALON_TIMER_STATUS( TIMER0_BASE, 0 );
+	refreshDisplay( );
+	// countTo9999( );
 }
 
-int main()
-{ 
-  alt_putstr("Hello from Nios II to you people!\n");
+void SWInterrupt( void* context )
+{
+	static uint16_t counter = 0;
 
-  // Registering function to timer irq
-  alt_ic_isr_register(
-		  TIMER0_IRQ_INTERRUPT_CONTROLLER_ID, TIMER0_IRQ, timer0Interrupt, NULL, NULL);
+	IOWR_ALTERA_AVALON_PIO_EDGE_CAP( SW_BASE, 0 );
 
-  // Configuring timer
-  IOWR_ALTERA_AVALON_TIMER_CONTROL( TIMER0_BASE,
-								  	ALTERA_AVALON_TIMER_CONTROL_START_MSK |
-									ALTERA_AVALON_TIMER_CONTROL_CONT_MSK |
-									ALTERA_AVALON_TIMER_CONTROL_ITO_MSK );
+	++counter;
+	displayDec( counter );
 
-  /* Event loop never exits. */
-  while (1)
-  {
+}
 
-  }
+int main( )
+{
+	alt_putstr( "Hello from Nios II to you people!\n" );
 
-  return 0;
+	// Registering function to timer irq
+	alt_ic_isr_register( TIMER0_IRQ_INTERRUPT_CONTROLLER_ID, TIMER0_IRQ, timer0Interrupt, NULL,
+	        NULL );
+
+	// Configuring timer
+	IOWR_ALTERA_AVALON_TIMER_CONTROL( TIMER0_BASE,
+	        ALTERA_AVALON_TIMER_CONTROL_START_MSK | ALTERA_AVALON_TIMER_CONTROL_CONT_MSK
+	                | ALTERA_AVALON_TIMER_CONTROL_ITO_MSK );
+
+	// Registering function to switch irq
+	alt_ic_isr_register( SW_IRQ_INTERRUPT_CONTROLLER_ID, SW_IRQ, SWInterrupt, NULL, NULL );
+
+	// Setting ports ( of switches ) which should generate interrupt
+	IOWR_ALTERA_AVALON_PIO_IRQ_MASK( SW_BASE, 0b111 );
+
+	// Restart displays
+	displayDec( 0 );
+
+	/* Event loop never exits. */
+	while( 1 )
+	{
+
+	}
+
+	return 0;
 }

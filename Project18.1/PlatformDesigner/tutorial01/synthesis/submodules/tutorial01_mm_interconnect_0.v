@@ -66,7 +66,10 @@ module tutorial01_mm_interconnect_0 (
 		output wire [31:0] SEG_SWITCH_s1_writedata,                               //                                                .writedata
 		output wire        SEG_SWITCH_s1_chipselect,                              //                                                .chipselect
 		output wire [1:0]  SW_s1_address,                                         //                                           SW_s1.address
+		output wire        SW_s1_write,                                           //                                                .write
 		input  wire [31:0] SW_s1_readdata,                                        //                                                .readdata
+		output wire [31:0] SW_s1_writedata,                                       //                                                .writedata
+		output wire        SW_s1_chipselect,                                      //                                                .chipselect
 		output wire [0:0]  sysid_qsys_0_control_slave_address,                    //                      sysid_qsys_0_control_slave.address
 		input  wire [31:0] sysid_qsys_0_control_slave_readdata,                   //                                                .readdata
 		output wire [2:0]  TIMER0_s1_address,                                     //                                       TIMER0_s1.address
@@ -1287,10 +1290,11 @@ module tutorial01_mm_interconnect_0 (
 		.uav_lock               (sw_s1_agent_m0_lock),                   //                         .lock
 		.uav_debugaccess        (sw_s1_agent_m0_debugaccess),            //                         .debugaccess
 		.av_address             (SW_s1_address),                         //      avalon_anti_slave_0.address
+		.av_write               (SW_s1_write),                           //                         .write
 		.av_readdata            (SW_s1_readdata),                        //                         .readdata
-		.av_write               (),                                      //              (terminated)
+		.av_writedata           (SW_s1_writedata),                       //                         .writedata
+		.av_chipselect          (SW_s1_chipselect),                      //                         .chipselect
 		.av_read                (),                                      //              (terminated)
-		.av_writedata           (),                                      //              (terminated)
 		.av_begintransfer       (),                                      //              (terminated)
 		.av_beginbursttransfer  (),                                      //              (terminated)
 		.av_burstcount          (),                                      //              (terminated)
@@ -1299,7 +1303,6 @@ module tutorial01_mm_interconnect_0 (
 		.av_waitrequest         (1'b0),                                  //              (terminated)
 		.av_writebyteenable     (),                                      //              (terminated)
 		.av_lock                (),                                      //              (terminated)
-		.av_chipselect          (),                                      //              (terminated)
 		.av_clken               (),                                      //              (terminated)
 		.uav_clken              (1'b0),                                  //              (terminated)
 		.av_debugaccess         (),                                      //              (terminated)
