@@ -8,8 +8,9 @@ use IEEE.numeric_std.all;
 
 entity tutorial01 is
 	port (
-		clk_clk       : in std_logic := '0'; --   clk.clk
-		reset_reset_n : in std_logic := '0'  -- reset.reset_n
+		clk_clk       : in  std_logic                    := '0'; --   clk.clk
+		pwm_pwm       : out std_logic_vector(3 downto 0);        --   pwm.pwm
+		reset_reset_n : in  std_logic                    := '0'  -- reset.reset_n
 	);
 end entity tutorial01;
 
@@ -98,6 +99,20 @@ architecture rtl of tutorial01 is
 		);
 	end component tutorial01_PLL;
 
+	component PWM4 is
+		port (
+			clk        : in  std_logic                     := 'X';             -- clk
+			reset_n    : in  std_logic                     := 'X';             -- reset_n
+			address    : in  std_logic_vector(2 downto 0)  := (others => 'X'); -- address
+			byteenable : in  std_logic_vector(3 downto 0)  := (others => 'X'); -- byteenable
+			read       : in  std_logic                     := 'X';             -- read
+			readdata   : out std_logic_vector(31 downto 0);                    -- readdata
+			write      : in  std_logic                     := 'X';             -- write
+			writedata  : in  std_logic_vector(31 downto 0) := (others => 'X'); -- writedata
+			pwm        : out std_logic_vector(3 downto 0)                      -- pwm
+		);
+	end component PWM4;
+
 	component tutorial01_RAM is
 		port (
 			clk        : in  std_logic                     := 'X';             -- clk
@@ -167,6 +182,12 @@ architecture rtl of tutorial01 is
 			PLL_pll_slave_read                                    : out std_logic;                                        -- read
 			PLL_pll_slave_readdata                                : in  std_logic_vector(31 downto 0) := (others => 'X'); -- readdata
 			PLL_pll_slave_writedata                               : out std_logic_vector(31 downto 0);                    -- writedata
+			PWM4_0_PWM4_address                                   : out std_logic_vector(2 downto 0);                     -- address
+			PWM4_0_PWM4_write                                     : out std_logic;                                        -- write
+			PWM4_0_PWM4_read                                      : out std_logic;                                        -- read
+			PWM4_0_PWM4_readdata                                  : in  std_logic_vector(31 downto 0) := (others => 'X'); -- readdata
+			PWM4_0_PWM4_writedata                                 : out std_logic_vector(31 downto 0);                    -- writedata
+			PWM4_0_PWM4_byteenable                                : out std_logic_vector(3 downto 0);                     -- byteenable
 			RAM_s1_address                                        : out std_logic_vector(12 downto 0);                    -- address
 			RAM_s1_write                                          : out std_logic;                                        -- write
 			RAM_s1_readdata                                       : in  std_logic_vector(31 downto 0) := (others => 'X'); -- readdata
@@ -324,7 +345,7 @@ architecture rtl of tutorial01 is
 		);
 	end component tutorial01_rst_controller_001;
 
-	signal pll_c0_clk                                                    : std_logic;                     -- PLL:c0 -> [CPU:clk, CPU_ID:clock, JTAG_UART:clk, RAM:clk, TIMER0:clk, irq_mapper:clk, mm_interconnect_0:PLL_c0_clk, rst_controller:clk]
+	signal pll_c0_clk                                                    : std_logic;                     -- PLL:c0 -> [CPU:clk, CPU_ID:clock, JTAG_UART:clk, PWM4_0:clk, RAM:clk, TIMER0:clk, irq_mapper:clk, mm_interconnect_0:PLL_c0_clk, rst_controller:clk]
 	signal cpu_data_master_readdata                                      : std_logic_vector(31 downto 0); -- mm_interconnect_0:CPU_data_master_readdata -> CPU:d_readdata
 	signal cpu_data_master_waitrequest                                   : std_logic;                     -- mm_interconnect_0:CPU_data_master_waitrequest -> CPU:d_waitrequest
 	signal cpu_data_master_debugaccess                                   : std_logic;                     -- CPU:debug_mem_slave_debugaccess_to_roms -> mm_interconnect_0:CPU_data_master_debugaccess
@@ -337,6 +358,12 @@ architecture rtl of tutorial01 is
 	signal cpu_instruction_master_waitrequest                            : std_logic;                     -- mm_interconnect_0:CPU_instruction_master_waitrequest -> CPU:i_waitrequest
 	signal cpu_instruction_master_address                                : std_logic_vector(16 downto 0); -- CPU:i_address -> mm_interconnect_0:CPU_instruction_master_address
 	signal cpu_instruction_master_read                                   : std_logic;                     -- CPU:i_read -> mm_interconnect_0:CPU_instruction_master_read
+	signal mm_interconnect_0_pwm4_0_pwm4_readdata                        : std_logic_vector(31 downto 0); -- PWM4_0:readdata -> mm_interconnect_0:PWM4_0_PWM4_readdata
+	signal mm_interconnect_0_pwm4_0_pwm4_address                         : std_logic_vector(2 downto 0);  -- mm_interconnect_0:PWM4_0_PWM4_address -> PWM4_0:address
+	signal mm_interconnect_0_pwm4_0_pwm4_read                            : std_logic;                     -- mm_interconnect_0:PWM4_0_PWM4_read -> PWM4_0:read
+	signal mm_interconnect_0_pwm4_0_pwm4_byteenable                      : std_logic_vector(3 downto 0);  -- mm_interconnect_0:PWM4_0_PWM4_byteenable -> PWM4_0:byteenable
+	signal mm_interconnect_0_pwm4_0_pwm4_write                           : std_logic;                     -- mm_interconnect_0:PWM4_0_PWM4_write -> PWM4_0:write
+	signal mm_interconnect_0_pwm4_0_pwm4_writedata                       : std_logic_vector(31 downto 0); -- mm_interconnect_0:PWM4_0_PWM4_writedata -> PWM4_0:writedata
 	signal mm_interconnect_0_jtag_uart_avalon_jtag_slave_chipselect      : std_logic;                     -- mm_interconnect_0:JTAG_UART_avalon_jtag_slave_chipselect -> JTAG_UART:av_chipselect
 	signal mm_interconnect_0_jtag_uart_avalon_jtag_slave_readdata        : std_logic_vector(31 downto 0); -- JTAG_UART:av_readdata -> mm_interconnect_0:JTAG_UART_avalon_jtag_slave_readdata
 	signal mm_interconnect_0_jtag_uart_avalon_jtag_slave_waitrequest     : std_logic;                     -- JTAG_UART:av_waitrequest -> mm_interconnect_0:JTAG_UART_avalon_jtag_slave_waitrequest
@@ -381,7 +408,7 @@ architecture rtl of tutorial01 is
 	signal mm_interconnect_0_jtag_uart_avalon_jtag_slave_read_ports_inv  : std_logic;                     -- mm_interconnect_0_jtag_uart_avalon_jtag_slave_read:inv -> JTAG_UART:av_read_n
 	signal mm_interconnect_0_jtag_uart_avalon_jtag_slave_write_ports_inv : std_logic;                     -- mm_interconnect_0_jtag_uart_avalon_jtag_slave_write:inv -> JTAG_UART:av_write_n
 	signal mm_interconnect_0_timer0_s1_write_ports_inv                   : std_logic;                     -- mm_interconnect_0_timer0_s1_write:inv -> TIMER0:write_n
-	signal rst_controller_reset_out_reset_ports_inv                      : std_logic;                     -- rst_controller_reset_out_reset:inv -> [CPU:reset_n, CPU_ID:reset_n, JTAG_UART:rst_n, TIMER0:reset_n]
+	signal rst_controller_reset_out_reset_ports_inv                      : std_logic;                     -- rst_controller_reset_out_reset:inv -> [CPU:reset_n, CPU_ID:reset_n, JTAG_UART:rst_n, PWM4_0:reset_n, TIMER0:reset_n]
 
 begin
 
@@ -465,6 +492,19 @@ begin
 			configupdate       => '0'                                        --           (terminated)
 		);
 
+	pwm4_0 : component PWM4
+		port map (
+			clk        => pll_c0_clk,                               -- clock.clk
+			reset_n    => rst_controller_reset_out_reset_ports_inv, -- reset.reset_n
+			address    => mm_interconnect_0_pwm4_0_pwm4_address,    --  PWM4.address
+			byteenable => mm_interconnect_0_pwm4_0_pwm4_byteenable, --      .byteenable
+			read       => mm_interconnect_0_pwm4_0_pwm4_read,       --      .read
+			readdata   => mm_interconnect_0_pwm4_0_pwm4_readdata,   --      .readdata
+			write      => mm_interconnect_0_pwm4_0_pwm4_write,      --      .write
+			writedata  => mm_interconnect_0_pwm4_0_pwm4_writedata,  --      .writedata
+			pwm        => pwm_pwm                                   --   pwm.pwm
+		);
+
 	ram : component tutorial01_RAM
 		port map (
 			clk        => pll_c0_clk,                          --   clk1.clk
@@ -532,6 +572,12 @@ begin
 			PLL_pll_slave_read                                    => mm_interconnect_0_pll_pll_slave_read,                      --                                                .read
 			PLL_pll_slave_readdata                                => mm_interconnect_0_pll_pll_slave_readdata,                  --                                                .readdata
 			PLL_pll_slave_writedata                               => mm_interconnect_0_pll_pll_slave_writedata,                 --                                                .writedata
+			PWM4_0_PWM4_address                                   => mm_interconnect_0_pwm4_0_pwm4_address,                     --                                     PWM4_0_PWM4.address
+			PWM4_0_PWM4_write                                     => mm_interconnect_0_pwm4_0_pwm4_write,                       --                                                .write
+			PWM4_0_PWM4_read                                      => mm_interconnect_0_pwm4_0_pwm4_read,                        --                                                .read
+			PWM4_0_PWM4_readdata                                  => mm_interconnect_0_pwm4_0_pwm4_readdata,                    --                                                .readdata
+			PWM4_0_PWM4_writedata                                 => mm_interconnect_0_pwm4_0_pwm4_writedata,                   --                                                .writedata
+			PWM4_0_PWM4_byteenable                                => mm_interconnect_0_pwm4_0_pwm4_byteenable,                  --                                                .byteenable
 			RAM_s1_address                                        => mm_interconnect_0_ram_s1_address,                          --                                          RAM_s1.address
 			RAM_s1_write                                          => mm_interconnect_0_ram_s1_write,                            --                                                .write
 			RAM_s1_readdata                                       => mm_interconnect_0_ram_s1_readdata,                         --                                                .readdata
