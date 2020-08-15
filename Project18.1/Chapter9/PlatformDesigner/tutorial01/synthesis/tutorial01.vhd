@@ -8,9 +8,8 @@ use IEEE.numeric_std.all;
 
 entity tutorial01 is
 	port (
-		clk_clk       : in  std_logic                    := '0'; --   clk.clk
-		led_export    : out std_logic_vector(3 downto 0);        --   led.export
-		reset_reset_n : in  std_logic                    := '0'  -- reset.reset_n
+		clk_clk       : in std_logic := '0'; --   clk.clk
+		reset_reset_n : in std_logic := '0'  -- reset.reset_n
 	);
 end entity tutorial01;
 
@@ -69,19 +68,6 @@ architecture rtl of tutorial01 is
 			av_irq         : out std_logic                                         -- irq
 		);
 	end component tutorial01_JTAG_UART;
-
-	component tutorial01_LED is
-		port (
-			clk        : in  std_logic                     := 'X';             -- clk
-			reset_n    : in  std_logic                     := 'X';             -- reset_n
-			address    : in  std_logic_vector(2 downto 0)  := (others => 'X'); -- address
-			write_n    : in  std_logic                     := 'X';             -- write_n
-			writedata  : in  std_logic_vector(31 downto 0) := (others => 'X'); -- writedata
-			chipselect : in  std_logic                     := 'X';             -- chipselect
-			readdata   : out std_logic_vector(31 downto 0);                    -- readdata
-			out_port   : out std_logic_vector(3 downto 0)                      -- export
-		);
-	end component tutorial01_LED;
 
 	component tutorial01_PLL is
 		port (
@@ -176,11 +162,6 @@ architecture rtl of tutorial01 is
 			JTAG_UART_avalon_jtag_slave_writedata                 : out std_logic_vector(31 downto 0);                    -- writedata
 			JTAG_UART_avalon_jtag_slave_waitrequest               : in  std_logic                     := 'X';             -- waitrequest
 			JTAG_UART_avalon_jtag_slave_chipselect                : out std_logic;                                        -- chipselect
-			LED_s1_address                                        : out std_logic_vector(2 downto 0);                     -- address
-			LED_s1_write                                          : out std_logic;                                        -- write
-			LED_s1_readdata                                       : in  std_logic_vector(31 downto 0) := (others => 'X'); -- readdata
-			LED_s1_writedata                                      : out std_logic_vector(31 downto 0);                    -- writedata
-			LED_s1_chipselect                                     : out std_logic;                                        -- chipselect
 			PLL_pll_slave_address                                 : out std_logic_vector(1 downto 0);                     -- address
 			PLL_pll_slave_write                                   : out std_logic;                                        -- write
 			PLL_pll_slave_read                                    : out std_logic;                                        -- read
@@ -343,7 +324,7 @@ architecture rtl of tutorial01 is
 		);
 	end component tutorial01_rst_controller_001;
 
-	signal pll_c0_clk                                                    : std_logic;                     -- PLL:c0 -> [CPU:clk, CPU_ID:clock, JTAG_UART:clk, LED:clk, RAM:clk, TIMER0:clk, irq_mapper:clk, mm_interconnect_0:PLL_c0_clk, rst_controller:clk]
+	signal pll_c0_clk                                                    : std_logic;                     -- PLL:c0 -> [CPU:clk, CPU_ID:clock, JTAG_UART:clk, RAM:clk, TIMER0:clk, irq_mapper:clk, mm_interconnect_0:PLL_c0_clk, rst_controller:clk]
 	signal cpu_data_master_readdata                                      : std_logic_vector(31 downto 0); -- mm_interconnect_0:CPU_data_master_readdata -> CPU:d_readdata
 	signal cpu_data_master_waitrequest                                   : std_logic;                     -- mm_interconnect_0:CPU_data_master_waitrequest -> CPU:d_waitrequest
 	signal cpu_data_master_debugaccess                                   : std_logic;                     -- CPU:debug_mem_slave_debugaccess_to_roms -> mm_interconnect_0:CPU_data_master_debugaccess
@@ -385,11 +366,6 @@ architecture rtl of tutorial01 is
 	signal mm_interconnect_0_ram_s1_write                                : std_logic;                     -- mm_interconnect_0:RAM_s1_write -> RAM:write
 	signal mm_interconnect_0_ram_s1_writedata                            : std_logic_vector(31 downto 0); -- mm_interconnect_0:RAM_s1_writedata -> RAM:writedata
 	signal mm_interconnect_0_ram_s1_clken                                : std_logic;                     -- mm_interconnect_0:RAM_s1_clken -> RAM:clken
-	signal mm_interconnect_0_led_s1_chipselect                           : std_logic;                     -- mm_interconnect_0:LED_s1_chipselect -> LED:chipselect
-	signal mm_interconnect_0_led_s1_readdata                             : std_logic_vector(31 downto 0); -- LED:readdata -> mm_interconnect_0:LED_s1_readdata
-	signal mm_interconnect_0_led_s1_address                              : std_logic_vector(2 downto 0);  -- mm_interconnect_0:LED_s1_address -> LED:address
-	signal mm_interconnect_0_led_s1_write                                : std_logic;                     -- mm_interconnect_0:LED_s1_write -> mm_interconnect_0_led_s1_write:in
-	signal mm_interconnect_0_led_s1_writedata                            : std_logic_vector(31 downto 0); -- mm_interconnect_0:LED_s1_writedata -> LED:writedata
 	signal mm_interconnect_0_timer0_s1_chipselect                        : std_logic;                     -- mm_interconnect_0:TIMER0_s1_chipselect -> TIMER0:chipselect
 	signal mm_interconnect_0_timer0_s1_readdata                          : std_logic_vector(15 downto 0); -- TIMER0:readdata -> mm_interconnect_0:TIMER0_s1_readdata
 	signal mm_interconnect_0_timer0_s1_address                           : std_logic_vector(2 downto 0);  -- mm_interconnect_0:TIMER0_s1_address -> TIMER0:address
@@ -404,9 +380,8 @@ architecture rtl of tutorial01 is
 	signal reset_reset_n_ports_inv                                       : std_logic;                     -- reset_reset_n:inv -> [rst_controller:reset_in0, rst_controller_001:reset_in0]
 	signal mm_interconnect_0_jtag_uart_avalon_jtag_slave_read_ports_inv  : std_logic;                     -- mm_interconnect_0_jtag_uart_avalon_jtag_slave_read:inv -> JTAG_UART:av_read_n
 	signal mm_interconnect_0_jtag_uart_avalon_jtag_slave_write_ports_inv : std_logic;                     -- mm_interconnect_0_jtag_uart_avalon_jtag_slave_write:inv -> JTAG_UART:av_write_n
-	signal mm_interconnect_0_led_s1_write_ports_inv                      : std_logic;                     -- mm_interconnect_0_led_s1_write:inv -> LED:write_n
 	signal mm_interconnect_0_timer0_s1_write_ports_inv                   : std_logic;                     -- mm_interconnect_0_timer0_s1_write:inv -> TIMER0:write_n
-	signal rst_controller_reset_out_reset_ports_inv                      : std_logic;                     -- rst_controller_reset_out_reset:inv -> [CPU:reset_n, CPU_ID:reset_n, JTAG_UART:rst_n, LED:reset_n, TIMER0:reset_n]
+	signal rst_controller_reset_out_reset_ports_inv                      : std_logic;                     -- rst_controller_reset_out_reset:inv -> [CPU:reset_n, CPU_ID:reset_n, JTAG_UART:rst_n, TIMER0:reset_n]
 
 begin
 
@@ -460,18 +435,6 @@ begin
 			av_writedata   => mm_interconnect_0_jtag_uart_avalon_jtag_slave_writedata,       --                  .writedata
 			av_waitrequest => mm_interconnect_0_jtag_uart_avalon_jtag_slave_waitrequest,     --                  .waitrequest
 			av_irq         => irq_mapper_receiver0_irq                                       --               irq.irq
-		);
-
-	led : component tutorial01_LED
-		port map (
-			clk        => pll_c0_clk,                               --                 clk.clk
-			reset_n    => rst_controller_reset_out_reset_ports_inv, --               reset.reset_n
-			address    => mm_interconnect_0_led_s1_address,         --                  s1.address
-			write_n    => mm_interconnect_0_led_s1_write_ports_inv, --                    .write_n
-			writedata  => mm_interconnect_0_led_s1_writedata,       --                    .writedata
-			chipselect => mm_interconnect_0_led_s1_chipselect,      --                    .chipselect
-			readdata   => mm_interconnect_0_led_s1_readdata,        --                    .readdata
-			out_port   => led_export                                -- external_connection.export
 		);
 
 	pll : component tutorial01_PLL
@@ -564,11 +527,6 @@ begin
 			JTAG_UART_avalon_jtag_slave_writedata                 => mm_interconnect_0_jtag_uart_avalon_jtag_slave_writedata,   --                                                .writedata
 			JTAG_UART_avalon_jtag_slave_waitrequest               => mm_interconnect_0_jtag_uart_avalon_jtag_slave_waitrequest, --                                                .waitrequest
 			JTAG_UART_avalon_jtag_slave_chipselect                => mm_interconnect_0_jtag_uart_avalon_jtag_slave_chipselect,  --                                                .chipselect
-			LED_s1_address                                        => mm_interconnect_0_led_s1_address,                          --                                          LED_s1.address
-			LED_s1_write                                          => mm_interconnect_0_led_s1_write,                            --                                                .write
-			LED_s1_readdata                                       => mm_interconnect_0_led_s1_readdata,                         --                                                .readdata
-			LED_s1_writedata                                      => mm_interconnect_0_led_s1_writedata,                        --                                                .writedata
-			LED_s1_chipselect                                     => mm_interconnect_0_led_s1_chipselect,                       --                                                .chipselect
 			PLL_pll_slave_address                                 => mm_interconnect_0_pll_pll_slave_address,                   --                                   PLL_pll_slave.address
 			PLL_pll_slave_write                                   => mm_interconnect_0_pll_pll_slave_write,                     --                                                .write
 			PLL_pll_slave_read                                    => mm_interconnect_0_pll_pll_slave_read,                      --                                                .read
@@ -732,8 +690,6 @@ begin
 	mm_interconnect_0_jtag_uart_avalon_jtag_slave_read_ports_inv <= not mm_interconnect_0_jtag_uart_avalon_jtag_slave_read;
 
 	mm_interconnect_0_jtag_uart_avalon_jtag_slave_write_ports_inv <= not mm_interconnect_0_jtag_uart_avalon_jtag_slave_write;
-
-	mm_interconnect_0_led_s1_write_ports_inv <= not mm_interconnect_0_led_s1_write;
 
 	mm_interconnect_0_timer0_s1_write_ports_inv <= not mm_interconnect_0_timer0_s1_write;
 
