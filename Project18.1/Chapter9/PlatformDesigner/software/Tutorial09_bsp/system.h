@@ -4,7 +4,7 @@
  * Machine generated for CPU 'CPU' in SOPC Builder design 'tutorial01'
  * SOPC Builder design path: ../../tutorial01.sopcinfo
  *
- * Generated: Sat Aug 15 17:26:18 CEST 2020
+ * Generated: Sun Aug 16 00:13:00 CEST 2020
  */
 
 /*
@@ -134,13 +134,13 @@
  */
 
 #define ALT_MODULE_CLASS_CPU_ID altera_avalon_sysid_qsys
-#define CPU_ID_BASE 0x110a0
+#define CPU_ID_BASE 0x11050
 #define CPU_ID_ID 305419896
 #define CPU_ID_IRQ -1
 #define CPU_ID_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define CPU_ID_NAME "/dev/CPU_ID"
 #define CPU_ID_SPAN 8
-#define CPU_ID_TIMESTAMP 1597494423
+#define CPU_ID_TIMESTAMP 1597529335
 #define CPU_ID_TYPE "altera_avalon_sysid_qsys"
 
 
@@ -155,7 +155,7 @@
 #define __ALTERA_AVALON_TIMER
 #define __ALTERA_NIOS2_GEN2
 #define __ALTPLL
-#define __PWM4
+#define __PWMN
 
 
 /*
@@ -164,7 +164,7 @@
  */
 
 #define ALT_MODULE_CLASS_JTAG_UART altera_avalon_jtag_uart
-#define JTAG_UART_BASE 0x110a8
+#define JTAG_UART_BASE 0x11058
 #define JTAG_UART_IRQ 0
 #define JTAG_UART_IRQ_INTERRUPT_CONTROLLER_ID 0
 #define JTAG_UART_NAME "/dev/JTAG_UART"
@@ -182,7 +182,7 @@
  */
 
 #define ALT_MODULE_CLASS_PLL altpll
-#define PLL_BASE 0x11090
+#define PLL_BASE 0x11040
 #define PLL_IRQ -1
 #define PLL_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define PLL_NAME "/dev/PLL"
@@ -191,17 +191,17 @@
 
 
 /*
- * PWM4_0 configuration
+ * PWM configuration
  *
  */
 
-#define ALT_MODULE_CLASS_PWM4_0 PWM4
-#define PWM4_0_BASE 0x0
-#define PWM4_0_IRQ -1
-#define PWM4_0_IRQ_INTERRUPT_CONTROLLER_ID -1
-#define PWM4_0_NAME "/dev/PWM4_0"
-#define PWM4_0_SPAN 32
-#define PWM4_0_TYPE "PWM4"
+#define ALT_MODULE_CLASS_PWM PWMn
+#define PWM_BASE 0x11020
+#define PWM_IRQ -1
+#define PWM_IRQ_INTERRUPT_CONTROLLER_ID -1
+#define PWM_NAME "/dev/PWM"
+#define PWM_SPAN 32
+#define PWM_TYPE "PWMn"
 
 
 /*
@@ -249,19 +249,19 @@
 #define ALT_NUM_INTERNAL_INTERRUPT_CONTROLLERS 1
 #define ALT_NUM_INTERRUPT_CONTROLLERS 1
 #define ALT_STDERR "/dev/JTAG_UART"
-#define ALT_STDERR_BASE 0x110a8
+#define ALT_STDERR_BASE 0x11058
 #define ALT_STDERR_DEV JTAG_UART
 #define ALT_STDERR_IS_JTAG_UART
 #define ALT_STDERR_PRESENT
 #define ALT_STDERR_TYPE "altera_avalon_jtag_uart"
 #define ALT_STDIN "/dev/JTAG_UART"
-#define ALT_STDIN_BASE 0x110a8
+#define ALT_STDIN_BASE 0x11058
 #define ALT_STDIN_DEV JTAG_UART
 #define ALT_STDIN_IS_JTAG_UART
 #define ALT_STDIN_PRESENT
 #define ALT_STDIN_TYPE "altera_avalon_jtag_uart"
 #define ALT_STDOUT "/dev/JTAG_UART"
-#define ALT_STDOUT_BASE 0x110a8
+#define ALT_STDOUT_BASE 0x11058
 #define ALT_STDOUT_DEV JTAG_UART
 #define ALT_STDOUT_IS_JTAG_UART
 #define ALT_STDOUT_PRESENT
