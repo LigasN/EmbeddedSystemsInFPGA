@@ -72,4 +72,17 @@ set_location_assignment PIN_P16 -to pwm_pwm[2]
 set_location_assignment PIN_N16 -to pwm_pwm[1]
 set_location_assignment PIN_M16 -to pwm_pwm[0]
 set_global_assignment -name VHDL_FILE PWMn/PWMn.vhd
+set_global_assignment -name VHDL_FILE SEG7/SEG7.vhd
+set_location_assignment PIN_D16 -to seg7_display[3]
+set_location_assignment PIN_D15 -to seg7_display[2]
+set_location_assignment PIN_E16 -to seg7_display[1]
+set_location_assignment PIN_E15 -to seg7_display[0]
+set_location_assignment PIN_F16 -to seg7_segment[7]
+set_location_assignment PIN_G16 -to seg7_segment[6]
+set_location_assignment PIN_G15 -to seg7_segment[5]
+set_location_assignment PIN_H16 -to seg7_segment[4]
+set_location_assignment PIN_H15 -to seg7_segment[3]
+set_location_assignment PIN_J16 -to seg7_segment[2]
+set_location_assignment PIN_J15 -to seg7_segment[1]
+set_location_assignment PIN_L16 -to seg7_segment[0]
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

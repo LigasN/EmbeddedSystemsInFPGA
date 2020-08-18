@@ -49,7 +49,7 @@ module tutorial01_CPU_ID (
 
   wire    [ 31: 0] readdata;
   //control_slave, which is an e_avalon_slave
-  assign readdata = address ? 1597529335 : 305419896;
+  assign readdata = address ? 1597780344 : 305419896;
 
 endmodule
 

@@ -10,7 +10,9 @@ entity tutorial01 is
 	port (
 		clk_clk       : in  std_logic                    := '0'; --   clk.clk
 		pwm_pwm       : out std_logic_vector(3 downto 0);        --   pwm.pwm
-		reset_reset_n : in  std_logic                    := '0'  -- reset.reset_n
+		reset_reset_n : in  std_logic                    := '0'; -- reset.reset_n
+		seg7_segment  : out std_logic_vector(7 downto 0);        --  seg7.segment
+		seg7_display  : out std_logic_vector(3 downto 0)         --      .display
 	);
 end entity tutorial01;
 
@@ -146,6 +148,21 @@ architecture rtl of tutorial01 is
 		);
 	end component tutorial01_TIMER0;
 
+	component SEG7 is
+		port (
+			clk        : in  std_logic                     := 'X';             -- clk
+			reset_n    : in  std_logic                     := 'X';             -- reset_n
+			address    : in  std_logic_vector(2 downto 0)  := (others => 'X'); -- address
+			byteenable : in  std_logic_vector(3 downto 0)  := (others => 'X'); -- byteenable
+			read       : in  std_logic                     := 'X';             -- read
+			readdata   : out std_logic_vector(31 downto 0);                    -- readdata
+			write      : in  std_logic                     := 'X';             -- write
+			writedata  : in  std_logic_vector(31 downto 0) := (others => 'X'); -- writedata
+			segment    : out std_logic_vector(7 downto 0);                     -- segment
+			display    : out std_logic_vector(3 downto 0)                      -- display
+		);
+	end component SEG7;
+
 	component tutorial01_mm_interconnect_0 is
 		port (
 			CLK_clk_clk                                           : in  std_logic                     := 'X';             -- clk
@@ -164,6 +181,12 @@ architecture rtl of tutorial01 is
 			CPU_instruction_master_waitrequest                    : out std_logic;                                        -- waitrequest
 			CPU_instruction_master_read                           : in  std_logic                     := 'X';             -- read
 			CPU_instruction_master_readdata                       : out std_logic_vector(31 downto 0);                    -- readdata
+			a_7SEG_0_avalon_slave_0_address                       : out std_logic_vector(2 downto 0);                     -- address
+			a_7SEG_0_avalon_slave_0_write                         : out std_logic;                                        -- write
+			a_7SEG_0_avalon_slave_0_read                          : out std_logic;                                        -- read
+			a_7SEG_0_avalon_slave_0_readdata                      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- readdata
+			a_7SEG_0_avalon_slave_0_writedata                     : out std_logic_vector(31 downto 0);                    -- writedata
+			a_7SEG_0_avalon_slave_0_byteenable                    : out std_logic_vector(3 downto 0);                     -- byteenable
 			CPU_debug_mem_slave_address                           : out std_logic_vector(8 downto 0);                     -- address
 			CPU_debug_mem_slave_write                             : out std_logic;                                        -- write
 			CPU_debug_mem_slave_read                              : out std_logic;                                        -- read
@@ -349,7 +372,7 @@ architecture rtl of tutorial01 is
 		);
 	end component tutorial01_rst_controller_001;
 
-	signal pll_c0_clk                                                    : std_logic;                     -- PLL:c0 -> [CPU:clk, CPU_ID:clock, JTAG_UART:clk, PWM:clk, RAM:clk, TIMER0:clk, irq_mapper:clk, mm_interconnect_0:PLL_c0_clk, rst_controller:clk]
+	signal pll_c0_clk                                                    : std_logic;                     -- PLL:c0 -> [CPU:clk, CPU_ID:clock, JTAG_UART:clk, PWM:clk, RAM:clk, TIMER0:clk, a_7SEG_0:clk, irq_mapper:clk, mm_interconnect_0:PLL_c0_clk, rst_controller:clk]
 	signal cpu_data_master_readdata                                      : std_logic_vector(31 downto 0); -- mm_interconnect_0:CPU_data_master_readdata -> CPU:d_readdata
 	signal cpu_data_master_waitrequest                                   : std_logic;                     -- mm_interconnect_0:CPU_data_master_waitrequest -> CPU:d_waitrequest
 	signal cpu_data_master_debugaccess                                   : std_logic;                     -- CPU:debug_mem_slave_debugaccess_to_roms -> mm_interconnect_0:CPU_data_master_debugaccess
@@ -375,6 +398,12 @@ architecture rtl of tutorial01 is
 	signal mm_interconnect_0_pwm_avalon_slave_0_byteenable               : std_logic_vector(3 downto 0);  -- mm_interconnect_0:PWM_avalon_slave_0_byteenable -> PWM:byteenable
 	signal mm_interconnect_0_pwm_avalon_slave_0_write                    : std_logic;                     -- mm_interconnect_0:PWM_avalon_slave_0_write -> PWM:write
 	signal mm_interconnect_0_pwm_avalon_slave_0_writedata                : std_logic_vector(31 downto 0); -- mm_interconnect_0:PWM_avalon_slave_0_writedata -> PWM:writedata
+	signal mm_interconnect_0_a_7seg_0_avalon_slave_0_readdata            : std_logic_vector(31 downto 0); -- a_7SEG_0:readdata -> mm_interconnect_0:a_7SEG_0_avalon_slave_0_readdata
+	signal mm_interconnect_0_a_7seg_0_avalon_slave_0_address             : std_logic_vector(2 downto 0);  -- mm_interconnect_0:a_7SEG_0_avalon_slave_0_address -> a_7SEG_0:address
+	signal mm_interconnect_0_a_7seg_0_avalon_slave_0_read                : std_logic;                     -- mm_interconnect_0:a_7SEG_0_avalon_slave_0_read -> a_7SEG_0:read
+	signal mm_interconnect_0_a_7seg_0_avalon_slave_0_byteenable          : std_logic_vector(3 downto 0);  -- mm_interconnect_0:a_7SEG_0_avalon_slave_0_byteenable -> a_7SEG_0:byteenable
+	signal mm_interconnect_0_a_7seg_0_avalon_slave_0_write               : std_logic;                     -- mm_interconnect_0:a_7SEG_0_avalon_slave_0_write -> a_7SEG_0:write
+	signal mm_interconnect_0_a_7seg_0_avalon_slave_0_writedata           : std_logic_vector(31 downto 0); -- mm_interconnect_0:a_7SEG_0_avalon_slave_0_writedata -> a_7SEG_0:writedata
 	signal mm_interconnect_0_cpu_id_control_slave_readdata               : std_logic_vector(31 downto 0); -- CPU_ID:readdata -> mm_interconnect_0:CPU_ID_control_slave_readdata
 	signal mm_interconnect_0_cpu_id_control_slave_address                : std_logic_vector(0 downto 0);  -- mm_interconnect_0:CPU_ID_control_slave_address -> CPU_ID:address
 	signal mm_interconnect_0_cpu_debug_mem_slave_readdata                : std_logic_vector(31 downto 0); -- CPU:debug_mem_slave_readdata -> mm_interconnect_0:CPU_debug_mem_slave_readdata
@@ -412,7 +441,7 @@ architecture rtl of tutorial01 is
 	signal mm_interconnect_0_jtag_uart_avalon_jtag_slave_read_ports_inv  : std_logic;                     -- mm_interconnect_0_jtag_uart_avalon_jtag_slave_read:inv -> JTAG_UART:av_read_n
 	signal mm_interconnect_0_jtag_uart_avalon_jtag_slave_write_ports_inv : std_logic;                     -- mm_interconnect_0_jtag_uart_avalon_jtag_slave_write:inv -> JTAG_UART:av_write_n
 	signal mm_interconnect_0_timer0_s1_write_ports_inv                   : std_logic;                     -- mm_interconnect_0_timer0_s1_write:inv -> TIMER0:write_n
-	signal rst_controller_reset_out_reset_ports_inv                      : std_logic;                     -- rst_controller_reset_out_reset:inv -> [CPU:reset_n, CPU_ID:reset_n, JTAG_UART:rst_n, PWM:reset_n, TIMER0:reset_n]
+	signal rst_controller_reset_out_reset_ports_inv                      : std_logic;                     -- rst_controller_reset_out_reset:inv -> [CPU:reset_n, CPU_ID:reset_n, JTAG_UART:rst_n, PWM:reset_n, TIMER0:reset_n, a_7SEG_0:reset_n]
 
 begin
 
@@ -540,6 +569,20 @@ begin
 			irq        => irq_mapper_receiver1_irq                     --   irq.irq
 		);
 
+	a_7seg_0 : component SEG7
+		port map (
+			clk        => pll_c0_clk,                                           --          clock.clk
+			reset_n    => rst_controller_reset_out_reset_ports_inv,             --          reset.reset_n
+			address    => mm_interconnect_0_a_7seg_0_avalon_slave_0_address,    -- avalon_slave_0.address
+			byteenable => mm_interconnect_0_a_7seg_0_avalon_slave_0_byteenable, --               .byteenable
+			read       => mm_interconnect_0_a_7seg_0_avalon_slave_0_read,       --               .read
+			readdata   => mm_interconnect_0_a_7seg_0_avalon_slave_0_readdata,   --               .readdata
+			write      => mm_interconnect_0_a_7seg_0_avalon_slave_0_write,      --               .write
+			writedata  => mm_interconnect_0_a_7seg_0_avalon_slave_0_writedata,  --               .writedata
+			segment    => seg7_segment,                                         --        display.segment
+			display    => seg7_display                                          --               .display
+		);
+
 	mm_interconnect_0 : component tutorial01_mm_interconnect_0
 		port map (
 			CLK_clk_clk                                           => clk_clk,                                                   --                                         CLK_clk.clk
@@ -558,6 +601,12 @@ begin
 			CPU_instruction_master_waitrequest                    => cpu_instruction_master_waitrequest,                        --                                                .waitrequest
 			CPU_instruction_master_read                           => cpu_instruction_master_read,                               --                                                .read
 			CPU_instruction_master_readdata                       => cpu_instruction_master_readdata,                           --                                                .readdata
+			a_7SEG_0_avalon_slave_0_address                       => mm_interconnect_0_a_7seg_0_avalon_slave_0_address,         --                         a_7SEG_0_avalon_slave_0.address
+			a_7SEG_0_avalon_slave_0_write                         => mm_interconnect_0_a_7seg_0_avalon_slave_0_write,           --                                                .write
+			a_7SEG_0_avalon_slave_0_read                          => mm_interconnect_0_a_7seg_0_avalon_slave_0_read,            --                                                .read
+			a_7SEG_0_avalon_slave_0_readdata                      => mm_interconnect_0_a_7seg_0_avalon_slave_0_readdata,        --                                                .readdata
+			a_7SEG_0_avalon_slave_0_writedata                     => mm_interconnect_0_a_7seg_0_avalon_slave_0_writedata,       --                                                .writedata
+			a_7SEG_0_avalon_slave_0_byteenable                    => mm_interconnect_0_a_7seg_0_avalon_slave_0_byteenable,      --                                                .byteenable
 			CPU_debug_mem_slave_address                           => mm_interconnect_0_cpu_debug_mem_slave_address,             --                             CPU_debug_mem_slave.address
 			CPU_debug_mem_slave_write                             => mm_interconnect_0_cpu_debug_mem_slave_write,               --                                                .write
 			CPU_debug_mem_slave_read                              => mm_interconnect_0_cpu_debug_mem_slave_read,                --                                                .read
