@@ -8,11 +8,12 @@ use IEEE.numeric_std.all;
 
 entity tutorial01 is
 	port (
-		clk_clk       : in  std_logic                    := '0'; --   clk.clk
-		pwm_pwm       : out std_logic_vector(3 downto 0);        --   pwm.pwm
-		reset_reset_n : in  std_logic                    := '0'; -- reset.reset_n
-		seg7_segment  : out std_logic_vector(7 downto 0);        --  seg7.segment
-		seg7_display  : out std_logic_vector(3 downto 0)         --      .display
+		clk_clk         : in  std_logic                    := '0';             --     clk.clk
+		encoder_encoder : in  std_logic_vector(1 downto 0) := (others => '0'); -- encoder.encoder
+		pwm_pwm         : out std_logic_vector(3 downto 0);                    --     pwm.pwm
+		reset_reset_n   : in  std_logic                    := '0';             --   reset.reset_n
+		seg7_segment    : out std_logic_vector(7 downto 0);                    --    seg7.segment
+		seg7_display    : out std_logic_vector(3 downto 0)                     --        .display
 	);
 end entity tutorial01;
 
@@ -56,6 +57,20 @@ architecture rtl of tutorial01 is
 			address  : in  std_logic                     := 'X'  -- address
 		);
 	end component tutorial01_CPU_ID;
+
+	component ENCODER is
+		port (
+			clk        : in  std_logic                     := 'X';             -- clk
+			reset_n    : in  std_logic                     := 'X';             -- reset_n
+			address    : in  std_logic                     := 'X';             -- address
+			byteenable : in  std_logic_vector(3 downto 0)  := (others => 'X'); -- byteenable
+			read       : in  std_logic                     := 'X';             -- read
+			readdata   : out std_logic_vector(31 downto 0);                    -- readdata
+			write      : in  std_logic                     := 'X';             -- write
+			writedata  : in  std_logic_vector(31 downto 0) := (others => 'X'); -- writedata
+			encoderAB  : in  std_logic_vector(1 downto 0)  := (others => 'X')  -- encoder
+		);
+	end component ENCODER;
 
 	component tutorial01_JTAG_UART is
 		port (
@@ -197,6 +212,12 @@ architecture rtl of tutorial01 is
 			CPU_debug_mem_slave_debugaccess                       : out std_logic;                                        -- debugaccess
 			CPU_ID_control_slave_address                          : out std_logic_vector(0 downto 0);                     -- address
 			CPU_ID_control_slave_readdata                         : in  std_logic_vector(31 downto 0) := (others => 'X'); -- readdata
+			Encoder_0_avalon_slave_0_address                      : out std_logic_vector(0 downto 0);                     -- address
+			Encoder_0_avalon_slave_0_write                        : out std_logic;                                        -- write
+			Encoder_0_avalon_slave_0_read                         : out std_logic;                                        -- read
+			Encoder_0_avalon_slave_0_readdata                     : in  std_logic_vector(31 downto 0) := (others => 'X'); -- readdata
+			Encoder_0_avalon_slave_0_writedata                    : out std_logic_vector(31 downto 0);                    -- writedata
+			Encoder_0_avalon_slave_0_byteenable                   : out std_logic_vector(3 downto 0);                     -- byteenable
 			JTAG_UART_avalon_jtag_slave_address                   : out std_logic_vector(0 downto 0);                     -- address
 			JTAG_UART_avalon_jtag_slave_write                     : out std_logic;                                        -- write
 			JTAG_UART_avalon_jtag_slave_read                      : out std_logic;                                        -- read
@@ -372,7 +393,7 @@ architecture rtl of tutorial01 is
 		);
 	end component tutorial01_rst_controller_001;
 
-	signal pll_c0_clk                                                    : std_logic;                     -- PLL:c0 -> [CPU:clk, CPU_ID:clock, JTAG_UART:clk, PWM:clk, RAM:clk, TIMER0:clk, a_7SEG_0:clk, irq_mapper:clk, mm_interconnect_0:PLL_c0_clk, rst_controller:clk]
+	signal pll_c0_clk                                                    : std_logic;                     -- PLL:c0 -> [CPU:clk, CPU_ID:clock, Encoder_0:clk, JTAG_UART:clk, PWM:clk, RAM:clk, TIMER0:clk, a_7SEG_0:clk, irq_mapper:clk, mm_interconnect_0:PLL_c0_clk, rst_controller:clk]
 	signal cpu_data_master_readdata                                      : std_logic_vector(31 downto 0); -- mm_interconnect_0:CPU_data_master_readdata -> CPU:d_readdata
 	signal cpu_data_master_waitrequest                                   : std_logic;                     -- mm_interconnect_0:CPU_data_master_waitrequest -> CPU:d_waitrequest
 	signal cpu_data_master_debugaccess                                   : std_logic;                     -- CPU:debug_mem_slave_debugaccess_to_roms -> mm_interconnect_0:CPU_data_master_debugaccess
@@ -404,6 +425,12 @@ architecture rtl of tutorial01 is
 	signal mm_interconnect_0_a_7seg_0_avalon_slave_0_byteenable          : std_logic_vector(3 downto 0);  -- mm_interconnect_0:a_7SEG_0_avalon_slave_0_byteenable -> a_7SEG_0:byteenable
 	signal mm_interconnect_0_a_7seg_0_avalon_slave_0_write               : std_logic;                     -- mm_interconnect_0:a_7SEG_0_avalon_slave_0_write -> a_7SEG_0:write
 	signal mm_interconnect_0_a_7seg_0_avalon_slave_0_writedata           : std_logic_vector(31 downto 0); -- mm_interconnect_0:a_7SEG_0_avalon_slave_0_writedata -> a_7SEG_0:writedata
+	signal mm_interconnect_0_encoder_0_avalon_slave_0_readdata           : std_logic_vector(31 downto 0); -- Encoder_0:readdata -> mm_interconnect_0:Encoder_0_avalon_slave_0_readdata
+	signal mm_interconnect_0_encoder_0_avalon_slave_0_address            : std_logic_vector(0 downto 0);  -- mm_interconnect_0:Encoder_0_avalon_slave_0_address -> Encoder_0:address
+	signal mm_interconnect_0_encoder_0_avalon_slave_0_read               : std_logic;                     -- mm_interconnect_0:Encoder_0_avalon_slave_0_read -> Encoder_0:read
+	signal mm_interconnect_0_encoder_0_avalon_slave_0_byteenable         : std_logic_vector(3 downto 0);  -- mm_interconnect_0:Encoder_0_avalon_slave_0_byteenable -> Encoder_0:byteenable
+	signal mm_interconnect_0_encoder_0_avalon_slave_0_write              : std_logic;                     -- mm_interconnect_0:Encoder_0_avalon_slave_0_write -> Encoder_0:write
+	signal mm_interconnect_0_encoder_0_avalon_slave_0_writedata          : std_logic_vector(31 downto 0); -- mm_interconnect_0:Encoder_0_avalon_slave_0_writedata -> Encoder_0:writedata
 	signal mm_interconnect_0_cpu_id_control_slave_readdata               : std_logic_vector(31 downto 0); -- CPU_ID:readdata -> mm_interconnect_0:CPU_ID_control_slave_readdata
 	signal mm_interconnect_0_cpu_id_control_slave_address                : std_logic_vector(0 downto 0);  -- mm_interconnect_0:CPU_ID_control_slave_address -> CPU_ID:address
 	signal mm_interconnect_0_cpu_debug_mem_slave_readdata                : std_logic_vector(31 downto 0); -- CPU:debug_mem_slave_readdata -> mm_interconnect_0:CPU_debug_mem_slave_readdata
@@ -441,7 +468,7 @@ architecture rtl of tutorial01 is
 	signal mm_interconnect_0_jtag_uart_avalon_jtag_slave_read_ports_inv  : std_logic;                     -- mm_interconnect_0_jtag_uart_avalon_jtag_slave_read:inv -> JTAG_UART:av_read_n
 	signal mm_interconnect_0_jtag_uart_avalon_jtag_slave_write_ports_inv : std_logic;                     -- mm_interconnect_0_jtag_uart_avalon_jtag_slave_write:inv -> JTAG_UART:av_write_n
 	signal mm_interconnect_0_timer0_s1_write_ports_inv                   : std_logic;                     -- mm_interconnect_0_timer0_s1_write:inv -> TIMER0:write_n
-	signal rst_controller_reset_out_reset_ports_inv                      : std_logic;                     -- rst_controller_reset_out_reset:inv -> [CPU:reset_n, CPU_ID:reset_n, JTAG_UART:rst_n, PWM:reset_n, TIMER0:reset_n, a_7SEG_0:reset_n]
+	signal rst_controller_reset_out_reset_ports_inv                      : std_logic;                     -- rst_controller_reset_out_reset:inv -> [CPU:reset_n, CPU_ID:reset_n, Encoder_0:reset_n, JTAG_UART:rst_n, PWM:reset_n, TIMER0:reset_n, a_7SEG_0:reset_n]
 
 begin
 
@@ -481,6 +508,19 @@ begin
 			reset_n  => rst_controller_reset_out_reset_ports_inv,          --         reset.reset_n
 			readdata => mm_interconnect_0_cpu_id_control_slave_readdata,   -- control_slave.readdata
 			address  => mm_interconnect_0_cpu_id_control_slave_address(0)  --              .address
+		);
+
+	encoder_0 : component ENCODER
+		port map (
+			clk        => pll_c0_clk,                                            --          clock.clk
+			reset_n    => rst_controller_reset_out_reset_ports_inv,              --          reset.reset_n
+			address    => mm_interconnect_0_encoder_0_avalon_slave_0_address(0), -- avalon_slave_0.address
+			byteenable => mm_interconnect_0_encoder_0_avalon_slave_0_byteenable, --               .byteenable
+			read       => mm_interconnect_0_encoder_0_avalon_slave_0_read,       --               .read
+			readdata   => mm_interconnect_0_encoder_0_avalon_slave_0_readdata,   --               .readdata
+			write      => mm_interconnect_0_encoder_0_avalon_slave_0_write,      --               .write
+			writedata  => mm_interconnect_0_encoder_0_avalon_slave_0_writedata,  --               .writedata
+			encoderAB  => encoder_encoder                                        --        encoder.encoder
 		);
 
 	jtag_uart : component tutorial01_JTAG_UART
@@ -617,6 +657,12 @@ begin
 			CPU_debug_mem_slave_debugaccess                       => mm_interconnect_0_cpu_debug_mem_slave_debugaccess,         --                                                .debugaccess
 			CPU_ID_control_slave_address                          => mm_interconnect_0_cpu_id_control_slave_address,            --                            CPU_ID_control_slave.address
 			CPU_ID_control_slave_readdata                         => mm_interconnect_0_cpu_id_control_slave_readdata,           --                                                .readdata
+			Encoder_0_avalon_slave_0_address                      => mm_interconnect_0_encoder_0_avalon_slave_0_address,        --                        Encoder_0_avalon_slave_0.address
+			Encoder_0_avalon_slave_0_write                        => mm_interconnect_0_encoder_0_avalon_slave_0_write,          --                                                .write
+			Encoder_0_avalon_slave_0_read                         => mm_interconnect_0_encoder_0_avalon_slave_0_read,           --                                                .read
+			Encoder_0_avalon_slave_0_readdata                     => mm_interconnect_0_encoder_0_avalon_slave_0_readdata,       --                                                .readdata
+			Encoder_0_avalon_slave_0_writedata                    => mm_interconnect_0_encoder_0_avalon_slave_0_writedata,      --                                                .writedata
+			Encoder_0_avalon_slave_0_byteenable                   => mm_interconnect_0_encoder_0_avalon_slave_0_byteenable,     --                                                .byteenable
 			JTAG_UART_avalon_jtag_slave_address                   => mm_interconnect_0_jtag_uart_avalon_jtag_slave_address,     --                     JTAG_UART_avalon_jtag_slave.address
 			JTAG_UART_avalon_jtag_slave_write                     => mm_interconnect_0_jtag_uart_avalon_jtag_slave_write,       --                                                .write
 			JTAG_UART_avalon_jtag_slave_read                      => mm_interconnect_0_jtag_uart_avalon_jtag_slave_read,        --                                                .read

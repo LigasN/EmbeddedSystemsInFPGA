@@ -4,7 +4,7 @@
  * Machine generated for CPU 'CPU' in SOPC Builder design 'tutorial01'
  * SOPC Builder design path: ../../tutorial01.sopcinfo
  *
- * Generated: Tue Aug 18 23:01:35 CEST 2020
+ * Generated: Thu Aug 20 23:16:48 CEST 2020
  */
 
 /*
@@ -140,7 +140,7 @@
 #define CPU_ID_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define CPU_ID_NAME "/dev/CPU_ID"
 #define CPU_ID_SPAN 8
-#define CPU_ID_TIMESTAMP 1597780344
+#define CPU_ID_TIMESTAMP 1597957550
 #define CPU_ID_TYPE "altera_avalon_sysid_qsys"
 
 
@@ -156,7 +156,22 @@
 #define __ALTERA_AVALON_TIMER
 #define __ALTERA_NIOS2_GEN2
 #define __ALTPLL
+#define __ENCODER
 #define __PWMN
+
+
+/*
+ * Encoder_0 configuration
+ *
+ */
+
+#define ALT_MODULE_CLASS_Encoder_0 Encoder
+#define ENCODER_0_BASE 0x11078
+#define ENCODER_0_IRQ -1
+#define ENCODER_0_IRQ_INTERRUPT_CONTROLLER_ID -1
+#define ENCODER_0_NAME "/dev/Encoder_0"
+#define ENCODER_0_SPAN 8
+#define ENCODER_0_TYPE "Encoder"
 
 
 /*
@@ -165,7 +180,7 @@
  */
 
 #define ALT_MODULE_CLASS_JTAG_UART altera_avalon_jtag_uart
-#define JTAG_UART_BASE 0x11078
+#define JTAG_UART_BASE 0x11080
 #define JTAG_UART_IRQ 0
 #define JTAG_UART_IRQ_INTERRUPT_CONTROLLER_ID 0
 #define JTAG_UART_NAME "/dev/JTAG_UART"
@@ -250,19 +265,19 @@
 #define ALT_NUM_INTERNAL_INTERRUPT_CONTROLLERS 1
 #define ALT_NUM_INTERRUPT_CONTROLLERS 1
 #define ALT_STDERR "/dev/JTAG_UART"
-#define ALT_STDERR_BASE 0x11078
+#define ALT_STDERR_BASE 0x11080
 #define ALT_STDERR_DEV JTAG_UART
 #define ALT_STDERR_IS_JTAG_UART
 #define ALT_STDERR_PRESENT
 #define ALT_STDERR_TYPE "altera_avalon_jtag_uart"
 #define ALT_STDIN "/dev/JTAG_UART"
-#define ALT_STDIN_BASE 0x11078
+#define ALT_STDIN_BASE 0x11080
 #define ALT_STDIN_DEV JTAG_UART
 #define ALT_STDIN_IS_JTAG_UART
 #define ALT_STDIN_PRESENT
 #define ALT_STDIN_TYPE "altera_avalon_jtag_uart"
 #define ALT_STDOUT "/dev/JTAG_UART"
-#define ALT_STDOUT_BASE 0x11078
+#define ALT_STDOUT_BASE 0x11080
 #define ALT_STDOUT_DEV JTAG_UART
 #define ALT_STDOUT_IS_JTAG_UART
 #define ALT_STDOUT_PRESENT
@@ -277,7 +292,7 @@
 
 #define ALT_MODULE_CLASS_TIMER0 altera_avalon_timer
 #define TIMER0_ALWAYS_RUN 0
-#define TIMER0_BASE 0x11020
+#define TIMER0_BASE 0x11000
 #define TIMER0_COUNTER_SIZE 32
 #define TIMER0_FIXED_PERIOD 0
 #define TIMER0_FREQ 50000000
@@ -302,7 +317,7 @@
  */
 
 #define ALT_MODULE_CLASS_a_7SEG_0 7SEG
-#define A_7SEG_0_BASE 0x11000
+#define A_7SEG_0_BASE 0x11020
 #define A_7SEG_0_IRQ -1
 #define A_7SEG_0_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define A_7SEG_0_NAME "/dev/a_7SEG_0"

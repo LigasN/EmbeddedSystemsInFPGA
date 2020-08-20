@@ -53,3 +53,14 @@ void displayDec( uint16_t decNumber, int8_t dotpos )
 	}
 
 }
+
+void intDiplayHEX( uint16_t number )
+{
+	for( uint8_t i = 0; i < 4; ++i )
+	{
+		setDigit( number % 16, 0, i );
+		number /= 16;
+	}
+
+}
+

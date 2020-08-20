@@ -34,14 +34,13 @@ void timer0Interrupt( void* context )
 			dotPos = -1;
 	}
 
-	displayDec( msCounter, dotPos );
+	//displayDec( msCounter, dotPos );
 
 }
 
 int main( )
 {
 	alt_putstr( "Hello from Nios II!\n" );
-
 // Slow down our timer
 	IOWR_ALTERA_AVALON_TIMER_PERIODH( TIMER0_BASE, (500000UL - 1UL) >> 16 );
 	IOWR_ALTERA_AVALON_TIMER_PERIODL( TIMER0_BASE, (500000UL - 1UL) );
@@ -71,10 +70,16 @@ int main( )
 //-------------------------------------------CHAPTER 10------------------------------------------
 	IOWR_32DIRECT( A_7SEG_0_BASE, 16, 100 - 1 );
 	IOWR_32DIRECT( A_7SEG_0_BASE, 20, 2000 - 1 );
+
+	IOWR_32DIRECT( ENCODER_0_BASE, 4, 50000 - 1 ); //1ms elimination
+	IOWR_32DIRECT( ENCODER_0_BASE, 0, 0x1000 ); // start value of counter
+
 //-----------------------------------------------------------------------------------------------
 	/* Event loop never exits. */
 	while( 1 )
-		;
+	{
+		intDiplayHEX( IORD_32DIRECT( ENCODER_0_BASE, 0 ) );
+	}
 
 	return 0;
 }

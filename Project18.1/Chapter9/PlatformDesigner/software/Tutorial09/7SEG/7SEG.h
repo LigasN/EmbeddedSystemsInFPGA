@@ -19,5 +19,6 @@
 
 void setDigit( uint8_t digit, uint8_t dp, uint8_t pos );
 void displayDec( uint16_t decNumber, int8_t dotpos );
+void intDiplayHEX( uint16_t number );
 
 #endif //_7SEG_H_
