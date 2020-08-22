@@ -4,7 +4,7 @@
  * Machine generated for CPU 'CPU' in SOPC Builder design 'tutorial01'
  * SOPC Builder design path: ../../tutorial01.sopcinfo
  *
- * Generated: Sat Aug 22 16:32:13 CEST 2020
+ * Generated: Sat Aug 22 21:46:00 CEST 2020
  */
 
 /*
@@ -134,13 +134,13 @@
  */
 
 #define ALT_MODULE_CLASS_CPU_ID altera_avalon_sysid_qsys
-#define CPU_ID_BASE 0x11090
+#define CPU_ID_BASE 0x11110
 #define CPU_ID_ID 305419896
 #define CPU_ID_IRQ -1
 #define CPU_ID_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define CPU_ID_NAME "/dev/CPU_ID"
 #define CPU_ID_SPAN 8
-#define CPU_ID_TIMESTAMP 1598106042
+#define CPU_ID_TIMESTAMP 1598125191
 #define CPU_ID_TYPE "altera_avalon_sysid_qsys"
 
 
@@ -158,7 +158,7 @@
 #define __ALTPLL
 #define __ENCODER
 #define __PWMN
-#define __WS2812
+#define __WS2812_RAM
 
 
 /*
@@ -167,7 +167,7 @@
  */
 
 #define ALT_MODULE_CLASS_Encoder_0 Encoder
-#define ENCODER_0_BASE 0x11098
+#define ENCODER_0_BASE 0x11118
 #define ENCODER_0_IRQ -1
 #define ENCODER_0_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define ENCODER_0_NAME "/dev/Encoder_0"
@@ -181,7 +181,7 @@
  */
 
 #define ALT_MODULE_CLASS_JTAG_UART altera_avalon_jtag_uart
-#define JTAG_UART_BASE 0x110a0
+#define JTAG_UART_BASE 0x11120
 #define JTAG_UART_IRQ 0
 #define JTAG_UART_IRQ_INTERRUPT_CONTROLLER_ID 0
 #define JTAG_UART_NAME "/dev/JTAG_UART"
@@ -199,7 +199,7 @@
  */
 
 #define ALT_MODULE_CLASS_PLL altpll
-#define PLL_BASE 0x11080
+#define PLL_BASE 0x11100
 #define PLL_IRQ -1
 #define PLL_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define PLL_NAME "/dev/PLL"
@@ -213,7 +213,7 @@
  */
 
 #define ALT_MODULE_CLASS_PWM PWMn
-#define PWM_BASE 0x11060
+#define PWM_BASE 0x110e0
 #define PWM_IRQ -1
 #define PWM_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define PWM_NAME "/dev/PWM"
@@ -251,6 +251,35 @@
 
 
 /*
+ * RAM_WS2812 configuration
+ *
+ */
+
+#define ALT_MODULE_CLASS_RAM_WS2812 altera_avalon_onchip_memory2
+#define RAM_WS2812_ALLOW_IN_SYSTEM_MEMORY_CONTENT_EDITOR 0
+#define RAM_WS2812_ALLOW_MRAM_SIM_CONTENTS_ONLY_FILE 0
+#define RAM_WS2812_BASE 0x11000
+#define RAM_WS2812_CONTENTS_INFO ""
+#define RAM_WS2812_DUAL_PORT 1
+#define RAM_WS2812_GUI_RAM_BLOCK_TYPE "AUTO"
+#define RAM_WS2812_INIT_CONTENTS_FILE "tutorial01_RAM_WS2812"
+#define RAM_WS2812_INIT_MEM_CONTENT 0
+#define RAM_WS2812_INSTANCE_ID "NONE"
+#define RAM_WS2812_IRQ -1
+#define RAM_WS2812_IRQ_INTERRUPT_CONTROLLER_ID -1
+#define RAM_WS2812_NAME "/dev/RAM_WS2812"
+#define RAM_WS2812_NON_DEFAULT_INIT_FILE_ENABLED 0
+#define RAM_WS2812_RAM_BLOCK_TYPE "AUTO"
+#define RAM_WS2812_READ_DURING_WRITE_MODE "OLD_DATA"
+#define RAM_WS2812_SINGLE_CLOCK_OP 1
+#define RAM_WS2812_SIZE_MULTIPLE 1
+#define RAM_WS2812_SIZE_VALUE 128
+#define RAM_WS2812_SPAN 128
+#define RAM_WS2812_TYPE "altera_avalon_onchip_memory2"
+#define RAM_WS2812_WRITABLE 1
+
+
+/*
  * System configuration
  *
  */
@@ -266,19 +295,19 @@
 #define ALT_NUM_INTERNAL_INTERRUPT_CONTROLLERS 1
 #define ALT_NUM_INTERRUPT_CONTROLLERS 1
 #define ALT_STDERR "/dev/JTAG_UART"
-#define ALT_STDERR_BASE 0x110a0
+#define ALT_STDERR_BASE 0x11120
 #define ALT_STDERR_DEV JTAG_UART
 #define ALT_STDERR_IS_JTAG_UART
 #define ALT_STDERR_PRESENT
 #define ALT_STDERR_TYPE "altera_avalon_jtag_uart"
 #define ALT_STDIN "/dev/JTAG_UART"
-#define ALT_STDIN_BASE 0x110a0
+#define ALT_STDIN_BASE 0x11120
 #define ALT_STDIN_DEV JTAG_UART
 #define ALT_STDIN_IS_JTAG_UART
 #define ALT_STDIN_PRESENT
 #define ALT_STDIN_TYPE "altera_avalon_jtag_uart"
 #define ALT_STDOUT "/dev/JTAG_UART"
-#define ALT_STDOUT_BASE 0x110a0
+#define ALT_STDOUT_BASE 0x11120
 #define ALT_STDOUT_DEV JTAG_UART
 #define ALT_STDOUT_IS_JTAG_UART
 #define ALT_STDOUT_PRESENT
@@ -293,7 +322,7 @@
 
 #define ALT_MODULE_CLASS_TIMER0 altera_avalon_timer
 #define TIMER0_ALWAYS_RUN 0
-#define TIMER0_BASE 0x11020
+#define TIMER0_BASE 0x11080
 #define TIMER0_COUNTER_SIZE 32
 #define TIMER0_FIXED_PERIOD 0
 #define TIMER0_FREQ 50000000
@@ -313,17 +342,17 @@
 
 
 /*
- * WS2812_0 configuration
+ * WS2812_RAM_0 configuration
  *
  */
 
-#define ALT_MODULE_CLASS_WS2812_0 WS2812
-#define WS2812_0_BASE 0x11000
-#define WS2812_0_IRQ -1
-#define WS2812_0_IRQ_INTERRUPT_CONTROLLER_ID -1
-#define WS2812_0_NAME "/dev/WS2812_0"
-#define WS2812_0_SPAN 32
-#define WS2812_0_TYPE "WS2812"
+#define ALT_MODULE_CLASS_WS2812_RAM_0 WS2812_RAM
+#define WS2812_RAM_0_BASE 0x0
+#define WS2812_RAM_0_IRQ -1
+#define WS2812_RAM_0_IRQ_INTERRUPT_CONTROLLER_ID -1
+#define WS2812_RAM_0_NAME "/dev/WS2812_RAM_0"
+#define WS2812_RAM_0_SPAN 32
+#define WS2812_RAM_0_TYPE "WS2812_RAM"
 
 
 /*
@@ -332,7 +361,7 @@
  */
 
 #define ALT_MODULE_CLASS_a_7SEG_0 7SEG
-#define A_7SEG_0_BASE 0x11040
+#define A_7SEG_0_BASE 0x110c0
 #define A_7SEG_0_IRQ -1
 #define A_7SEG_0_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define A_7SEG_0_NAME "/dev/a_7SEG_0"
