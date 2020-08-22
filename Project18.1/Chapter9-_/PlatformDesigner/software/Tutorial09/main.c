@@ -1,93 +1,110 @@
-#include <stdio.h>
+#include <stdint.h>
+#include <io.h>
 
 #include "system.h"
 #include "sys/alt_stdio.h"
 #include "sys/alt_sys_wrappers.h"
 #include "sys/alt_irq.h"
-#include "altera_avalon_timer_regs.h"
-#include "altera_avalon_timer.h"
-#include <io.h>
 
-#include "7SEG/7SEG.h"
+#define WS2812_STATUS_REG	24
+#define WS2812_STATUS_INT	(1<<0)
 
-/// Counter but not really ms (editing for good visual results)
-volatile uint16_t msCounter = 0;
-volatile const uint8_t dotDelay = 20;
-volatile int8_t dotPos = -1;
+#define WS2812_CONFIG_REG	20
+#define WS2812_CONFIG_INT	(1<<1)
+#define WS2812_CONFIG_START	(1<<0)
 
-/// Timer interupt handler
-void timer0Interrupt( void* context )
+#define WS2812_T0H_REG		0
+#define WS2812_T0L_REG		4
+#define WS2812_T1H_REG		8
+#define WS2812_T1L_REG		12
+#define WS2812_RES_REG		16
+
+volatile uint8_t WS2812Done = 0;
+void WS2812Interrupt( void* context )
 {
-	// Interrupt reset
-	IOWR_ALTERA_AVALON_TIMER_STATUS( TIMER0_BASE, 0 );
+	//kasowanie flagi przerwania
+	IOWR_32DIRECT( WS2812_RAM_INT_0_BASE, WS2812_STATUS_REG, 0 );
+	WS2812Done = 1;
+}
 
-	if( msCounter < 10000 )
-		++msCounter;
-	else
-		msCounter = 0;
-
-	if( !(msCounter % dotDelay) )
-	{
-		if( dotPos < 4 )
-			++dotPos;
-		else
-			dotPos = -1;
-	}
-
-	//displayDec( msCounter, dotPos );
-
+void WS2812UpdateWaitInt( void )
+{
+	IOWR_32DIRECT( WS2812_RAM_INT_0_BASE, WS2812_CONFIG_REG,
+	WS2812_CONFIG_INT | WS2812_CONFIG_START );
+	while( WS2812Done != 1 )
+		;
+	WS2812Done = 0;
+	ALT_USLEEP( 5000 );
 }
 
 int main( )
 {
 	alt_putstr( "Hello from Nios II!\n" );
-// Slow down our timer
-	IOWR_ALTERA_AVALON_TIMER_PERIODH( TIMER0_BASE, (500000UL - 1UL) >> 16 );
-	IOWR_ALTERA_AVALON_TIMER_PERIODL( TIMER0_BASE, (500000UL - 1UL) );
 
-// Registering function to timer irq
-	alt_ic_isr_register( TIMER0_IRQ_INTERRUPT_CONTROLLER_ID, TIMER0_IRQ, timer0Interrupt, NULL,
-	        NULL );
+	// ustawiamy czasy konieczne do wygenerowania prawidłowych przebiegów sterujących
+	IOWR_32DIRECT( WS2812_RAM_INT_0_BASE, WS2812_T0H_REG, NIOS2_CPU_FREQ * 350LL / 1000000000LL );
+	IOWR_32DIRECT( WS2812_RAM_INT_0_BASE, WS2812_T0L_REG, NIOS2_CPU_FREQ * 900LL / 1000000000LL );
+	IOWR_32DIRECT( WS2812_RAM_INT_0_BASE, WS2812_T1H_REG, NIOS2_CPU_FREQ * 900LL / 1000000000LL );
+	IOWR_32DIRECT( WS2812_RAM_INT_0_BASE, WS2812_T1L_REG, NIOS2_CPU_FREQ * 350LL / 1000000000LL );
+	IOWR_32DIRECT( WS2812_RAM_INT_0_BASE, WS2812_RES_REG,
+	        NIOS2_CPU_FREQ * 100000LL / 1000000000LL );
 
-// Configuring timer
-	IOWR_ALTERA_AVALON_TIMER_CONTROL( TIMER0_BASE,
-	        ALTERA_AVALON_TIMER_CONTROL_START_MSK | ALTERA_AVALON_TIMER_CONTROL_CONT_MSK
-	                | ALTERA_AVALON_TIMER_CONTROL_ITO_MSK );
+	alt_ic_isr_register( WS2812_RAM_INT_0_IRQ_INTERRUPT_CONTROLLER_ID, WS2812_RAM_INT_0_IRQ,
+	        WS2812Interrupt, NULL, NULL );
 
-// Restart displays
-	displayDec( 0, -1 );
+	IOWR_32DIRECT( RAM_WS2812_BASE, 0, 0x00FF00 );
+	IOWR_32DIRECT( RAM_WS2812_BASE, 4, 0x0000FF );
 
-//-------------------------------------------CHAPTER 9------------------------------------------
-	IOWR_32DIRECT( PWM_BASE, 16, 1 ); // preskaller 1 -> podzia� sygna�u zegarowego na 2
-	IOWR_32DIRECT( PWM_BASE, 20, 4095 ); // maksymalna warto�c PWm - rozdzielczo�c
+	WS2812UpdateWaitInt( );
 
-//warto�ci poszczeg�lnych kana��w
-	IOWR_32DIRECT( PWM_BASE, 0, 0 );
-	IOWR_32DIRECT( PWM_BASE, 4, 2048 );
-	IOWR_32DIRECT( PWM_BASE, 8, 3072 );
-	IOWR_32DIRECT( PWM_BASE, 12, 4000 );
-//-------------------------------------------CHAPTER 10------------------------------------------
-	IOWR_32DIRECT( A_7SEG_0_BASE, 16, 100 - 1 );
-	IOWR_32DIRECT( A_7SEG_0_BASE, 20, 2000 - 1 );
-
-	IOWR_32DIRECT( ENCODER_0_BASE, 4, 50000 - 1 ); //1ms elimination
-	IOWR_32DIRECT( ENCODER_0_BASE, 0, 0x1000 ); // start value of counter
-
-//-------------------------------------------CHAPTER 11------------------------------------------
-	IOWR_32DIRECT( WS2812_RAM_0_BASE, 0, (NIOS2_CPU_FREQ * 350LL) / 1000000000LL );
-	IOWR_32DIRECT( WS2812_RAM_0_BASE, 4, (NIOS2_CPU_FREQ * 900LL) / 1000000000LL );
-	IOWR_32DIRECT( WS2812_RAM_0_BASE, 8, (NIOS2_CPU_FREQ * 900LL) / 1000000000LL );
-	IOWR_32DIRECT( WS2812_RAM_0_BASE, 12, (NIOS2_CPU_FREQ * 350LL) / 1000000000LL );
-	IOWR_32DIRECT( WS2812_RAM_0_BASE, 16, (NIOS2_CPU_FREQ * 100000LL) / 1000000000LL );
-
-	// Colors
-	IOWR_32DIRECT( RAM_WS2812_BASE, 0, 0xFFFF00 );
-	IOWR_32DIRECT( RAM_WS2812_BASE, 4, 0x00FFFF );
-
-	/* Event loop never exits. */
+	uint32_t temp;
 	while( 1 )
 	{
-		intDiplayHEX( IORD_32DIRECT( ENCODER_0_BASE, 0 ) );
+
+		for( int j = 0; j < 255; ++j )
+		{
+			temp = IORD_32DIRECT( RAM_WS2812_BASE, 0 );
+			temp += 0x000001;
+			temp -= 0x000100;
+			IOWR_32DIRECT( RAM_WS2812_BASE, 0, temp );
+
+			temp = IORD_32DIRECT( RAM_WS2812_BASE, 4 );
+			temp += 0x000100;
+			temp -= 0x000001;
+			IOWR_32DIRECT( RAM_WS2812_BASE, 4, temp );
+
+			WS2812UpdateWaitInt( );
+
+		}
+
+		for( int j = 0; j < 255; ++j )
+		{
+			temp = IORD_32DIRECT( RAM_WS2812_BASE, 0 );
+			temp += 0x010000;
+			temp -= 0x000001;
+			IOWR_32DIRECT( RAM_WS2812_BASE, 0, temp );
+
+			temp = IORD_32DIRECT( RAM_WS2812_BASE, 4 );
+			temp += 0x010000;
+			temp -= 0x000100;
+			IOWR_32DIRECT( RAM_WS2812_BASE, 4, temp );
+			WS2812UpdateWaitInt( );
+
+		}
+		for( int j = 0; j < 255; ++j )
+		{
+			temp = IORD_32DIRECT( RAM_WS2812_BASE, 0 );
+			temp += 0x000100;
+			temp -= 0x010000;
+			IOWR_32DIRECT( RAM_WS2812_BASE, 0, temp );
+
+			temp = IORD_32DIRECT( RAM_WS2812_BASE, 4 );
+			temp += 0x000001;
+			temp -= 0x010000;
+			IOWR_32DIRECT( RAM_WS2812_BASE, 4, temp );
+			WS2812UpdateWaitInt( );
+
+		}
 	}
 
 	return 0;

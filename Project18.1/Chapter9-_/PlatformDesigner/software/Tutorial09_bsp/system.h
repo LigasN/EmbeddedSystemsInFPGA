@@ -4,7 +4,7 @@
  * Machine generated for CPU 'CPU' in SOPC Builder design 'tutorial01'
  * SOPC Builder design path: ../../tutorial01.sopcinfo
  *
- * Generated: Sat Aug 22 21:46:00 CEST 2020
+ * Generated: Sat Aug 22 23:09:15 CEST 2020
  */
 
 /*
@@ -62,7 +62,7 @@
 
 #define ALT_CPU_ARCHITECTURE "altera_nios2_gen2"
 #define ALT_CPU_BIG_ENDIAN 0
-#define ALT_CPU_BREAK_ADDR 0x00010820
+#define ALT_CPU_BREAK_ADDR 0x00001020
 #define ALT_CPU_CPU_ARCH_NIOS2_R1
 #define ALT_CPU_CPU_FREQ 50000000u
 #define ALT_CPU_CPU_ID_SIZE 1
@@ -72,7 +72,7 @@
 #define ALT_CPU_DCACHE_LINE_SIZE 0
 #define ALT_CPU_DCACHE_LINE_SIZE_LOG2 0
 #define ALT_CPU_DCACHE_SIZE 0
-#define ALT_CPU_EXCEPTION_ADDR 0x00008020
+#define ALT_CPU_EXCEPTION_ADDR 0x00010020
 #define ALT_CPU_FLASH_ACCELERATOR_LINES 0
 #define ALT_CPU_FLASH_ACCELERATOR_LINE_SIZE 0
 #define ALT_CPU_FLUSHDA_SUPPORTED
@@ -90,7 +90,7 @@
 #define ALT_CPU_INST_ADDR_WIDTH 0x11
 #define ALT_CPU_NAME "CPU"
 #define ALT_CPU_OCI_VERSION 1
-#define ALT_CPU_RESET_ADDR 0x00008000
+#define ALT_CPU_RESET_ADDR 0x00010000
 
 
 /*
@@ -99,7 +99,7 @@
  */
 
 #define NIOS2_BIG_ENDIAN 0
-#define NIOS2_BREAK_ADDR 0x00010820
+#define NIOS2_BREAK_ADDR 0x00001020
 #define NIOS2_CPU_ARCH_NIOS2_R1
 #define NIOS2_CPU_FREQ 50000000u
 #define NIOS2_CPU_ID_SIZE 1
@@ -109,7 +109,7 @@
 #define NIOS2_DCACHE_LINE_SIZE 0
 #define NIOS2_DCACHE_LINE_SIZE_LOG2 0
 #define NIOS2_DCACHE_SIZE 0
-#define NIOS2_EXCEPTION_ADDR 0x00008020
+#define NIOS2_EXCEPTION_ADDR 0x00010020
 #define NIOS2_FLASH_ACCELERATOR_LINES 0
 #define NIOS2_FLASH_ACCELERATOR_LINE_SIZE 0
 #define NIOS2_FLUSHDA_SUPPORTED
@@ -125,7 +125,7 @@
 #define NIOS2_ICACHE_SIZE 0
 #define NIOS2_INST_ADDR_WIDTH 0x11
 #define NIOS2_OCI_VERSION 1
-#define NIOS2_RESET_ADDR 0x00008000
+#define NIOS2_RESET_ADDR 0x00010000
 
 
 /*
@@ -134,13 +134,13 @@
  */
 
 #define ALT_MODULE_CLASS_CPU_ID altera_avalon_sysid_qsys
-#define CPU_ID_BASE 0x11110
+#define CPU_ID_BASE 0x90
 #define CPU_ID_ID 305419896
 #define CPU_ID_IRQ -1
 #define CPU_ID_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define CPU_ID_NAME "/dev/CPU_ID"
 #define CPU_ID_SPAN 8
-#define CPU_ID_TIMESTAMP 1598125191
+#define CPU_ID_TIMESTAMP 1598129924
 #define CPU_ID_TYPE "altera_avalon_sysid_qsys"
 
 
@@ -149,30 +149,13 @@
  *
  */
 
-#define __7SEG
 #define __ALTERA_AVALON_JTAG_UART
 #define __ALTERA_AVALON_ONCHIP_MEMORY2
 #define __ALTERA_AVALON_SYSID_QSYS
 #define __ALTERA_AVALON_TIMER
 #define __ALTERA_NIOS2_GEN2
 #define __ALTPLL
-#define __ENCODER
-#define __PWMN
-#define __WS2812_RAM
-
-
-/*
- * Encoder_0 configuration
- *
- */
-
-#define ALT_MODULE_CLASS_Encoder_0 Encoder
-#define ENCODER_0_BASE 0x11118
-#define ENCODER_0_IRQ -1
-#define ENCODER_0_IRQ_INTERRUPT_CONTROLLER_ID -1
-#define ENCODER_0_NAME "/dev/Encoder_0"
-#define ENCODER_0_SPAN 8
-#define ENCODER_0_TYPE "Encoder"
+#define __WS2812_RAM_INT
 
 
 /*
@@ -181,7 +164,7 @@
  */
 
 #define ALT_MODULE_CLASS_JTAG_UART altera_avalon_jtag_uart
-#define JTAG_UART_BASE 0x11120
+#define JTAG_UART_BASE 0xa0
 #define JTAG_UART_IRQ 0
 #define JTAG_UART_IRQ_INTERRUPT_CONTROLLER_ID 0
 #define JTAG_UART_NAME "/dev/JTAG_UART"
@@ -199,26 +182,12 @@
  */
 
 #define ALT_MODULE_CLASS_PLL altpll
-#define PLL_BASE 0x11100
+#define PLL_BASE 0x80
 #define PLL_IRQ -1
 #define PLL_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define PLL_NAME "/dev/PLL"
 #define PLL_SPAN 16
 #define PLL_TYPE "altpll"
-
-
-/*
- * PWM configuration
- *
- */
-
-#define ALT_MODULE_CLASS_PWM PWMn
-#define PWM_BASE 0x110e0
-#define PWM_IRQ -1
-#define PWM_IRQ_INTERRUPT_CONTROLLER_ID -1
-#define PWM_NAME "/dev/PWM"
-#define PWM_SPAN 32
-#define PWM_TYPE "PWMn"
 
 
 /*
@@ -229,7 +198,7 @@
 #define ALT_MODULE_CLASS_RAM altera_avalon_onchip_memory2
 #define RAM_ALLOW_IN_SYSTEM_MEMORY_CONTENT_EDITOR 0
 #define RAM_ALLOW_MRAM_SIM_CONTENTS_ONLY_FILE 0
-#define RAM_BASE 0x8000
+#define RAM_BASE 0x10000
 #define RAM_CONTENTS_INFO ""
 #define RAM_DUAL_PORT 0
 #define RAM_GUI_RAM_BLOCK_TYPE "AUTO"
@@ -258,7 +227,7 @@
 #define ALT_MODULE_CLASS_RAM_WS2812 altera_avalon_onchip_memory2
 #define RAM_WS2812_ALLOW_IN_SYSTEM_MEMORY_CONTENT_EDITOR 0
 #define RAM_WS2812_ALLOW_MRAM_SIM_CONTENTS_ONLY_FILE 0
-#define RAM_WS2812_BASE 0x11000
+#define RAM_WS2812_BASE 0x100
 #define RAM_WS2812_CONTENTS_INFO ""
 #define RAM_WS2812_DUAL_PORT 1
 #define RAM_WS2812_GUI_RAM_BLOCK_TYPE "AUTO"
@@ -295,19 +264,19 @@
 #define ALT_NUM_INTERNAL_INTERRUPT_CONTROLLERS 1
 #define ALT_NUM_INTERRUPT_CONTROLLERS 1
 #define ALT_STDERR "/dev/JTAG_UART"
-#define ALT_STDERR_BASE 0x11120
+#define ALT_STDERR_BASE 0xa0
 #define ALT_STDERR_DEV JTAG_UART
 #define ALT_STDERR_IS_JTAG_UART
 #define ALT_STDERR_PRESENT
 #define ALT_STDERR_TYPE "altera_avalon_jtag_uart"
 #define ALT_STDIN "/dev/JTAG_UART"
-#define ALT_STDIN_BASE 0x11120
+#define ALT_STDIN_BASE 0xa0
 #define ALT_STDIN_DEV JTAG_UART
 #define ALT_STDIN_IS_JTAG_UART
 #define ALT_STDIN_PRESENT
 #define ALT_STDIN_TYPE "altera_avalon_jtag_uart"
 #define ALT_STDOUT "/dev/JTAG_UART"
-#define ALT_STDOUT_BASE 0x11120
+#define ALT_STDOUT_BASE 0xa0
 #define ALT_STDOUT_DEV JTAG_UART
 #define ALT_STDOUT_IS_JTAG_UART
 #define ALT_STDOUT_PRESENT
@@ -322,7 +291,7 @@
 
 #define ALT_MODULE_CLASS_TIMER0 altera_avalon_timer
 #define TIMER0_ALWAYS_RUN 0
-#define TIMER0_BASE 0x11080
+#define TIMER0_BASE 0x20
 #define TIMER0_COUNTER_SIZE 32
 #define TIMER0_FIXED_PERIOD 0
 #define TIMER0_FREQ 50000000
@@ -342,31 +311,17 @@
 
 
 /*
- * WS2812_RAM_0 configuration
+ * WS2812_RAM_INT_0 configuration
  *
  */
 
-#define ALT_MODULE_CLASS_WS2812_RAM_0 WS2812_RAM
-#define WS2812_RAM_0_BASE 0x0
-#define WS2812_RAM_0_IRQ -1
-#define WS2812_RAM_0_IRQ_INTERRUPT_CONTROLLER_ID -1
-#define WS2812_RAM_0_NAME "/dev/WS2812_RAM_0"
-#define WS2812_RAM_0_SPAN 32
-#define WS2812_RAM_0_TYPE "WS2812_RAM"
-
-
-/*
- * a_7SEG_0 configuration
- *
- */
-
-#define ALT_MODULE_CLASS_a_7SEG_0 7SEG
-#define A_7SEG_0_BASE 0x110c0
-#define A_7SEG_0_IRQ -1
-#define A_7SEG_0_IRQ_INTERRUPT_CONTROLLER_ID -1
-#define A_7SEG_0_NAME "/dev/a_7SEG_0"
-#define A_7SEG_0_SPAN 32
-#define A_7SEG_0_TYPE "7SEG"
+#define ALT_MODULE_CLASS_WS2812_RAM_INT_0 WS2812_RAM_INT
+#define WS2812_RAM_INT_0_BASE 0x0
+#define WS2812_RAM_INT_0_IRQ 2
+#define WS2812_RAM_INT_0_IRQ_INTERRUPT_CONTROLLER_ID 0
+#define WS2812_RAM_INT_0_NAME "/dev/WS2812_RAM_INT_0"
+#define WS2812_RAM_INT_0_SPAN 32
+#define WS2812_RAM_INT_0_TYPE "WS2812_RAM_INT"
 
 
 /*

@@ -8,13 +8,9 @@ use IEEE.numeric_std.all;
 
 entity tutorial01 is
 	port (
-		clk_clk         : in  std_logic                    := '0';             --     clk.clk
-		encoder_encoder : in  std_logic_vector(1 downto 0) := (others => '0'); -- encoder.encoder
-		led_out_led_out : out std_logic;                                       -- led_out.led_out
-		pwm_pwm         : out std_logic_vector(3 downto 0);                    --     pwm.pwm
-		reset_reset_n   : in  std_logic                    := '0';             --   reset.reset_n
-		seg7_segment    : out std_logic_vector(7 downto 0);                    --    seg7.segment
-		seg7_display    : out std_logic_vector(3 downto 0)                     --        .display
+		clk_clk         : in  std_logic := '0'; --     clk.clk
+		led_out_led_out : out std_logic;        -- led_out.led_out
+		reset_reset_n   : in  std_logic := '0'  --   reset.reset_n
 	);
 end entity tutorial01;
 
@@ -59,20 +55,6 @@ architecture rtl of tutorial01 is
 		);
 	end component tutorial01_CPU_ID;
 
-	component ENCODER is
-		port (
-			clk        : in  std_logic                     := 'X';             -- clk
-			reset_n    : in  std_logic                     := 'X';             -- reset_n
-			address    : in  std_logic                     := 'X';             -- address
-			byteenable : in  std_logic_vector(3 downto 0)  := (others => 'X'); -- byteenable
-			read       : in  std_logic                     := 'X';             -- read
-			readdata   : out std_logic_vector(31 downto 0);                    -- readdata
-			write      : in  std_logic                     := 'X';             -- write
-			writedata  : in  std_logic_vector(31 downto 0) := (others => 'X'); -- writedata
-			encoderAB  : in  std_logic_vector(1 downto 0)  := (others => 'X')  -- encoder
-		);
-	end component ENCODER;
-
 	component tutorial01_JTAG_UART is
 		port (
 			clk            : in  std_logic                     := 'X';             -- clk
@@ -116,24 +98,6 @@ architecture rtl of tutorial01 is
 			configupdate       : in  std_logic                     := 'X'              -- export
 		);
 	end component tutorial01_PLL;
-
-	component PWMn is
-		generic (
-			CHANNELS : integer := 4;
-			ADDRBITS : integer := 3
-		);
-		port (
-			clk        : in  std_logic                     := 'X';             -- clk
-			reset_n    : in  std_logic                     := 'X';             -- reset_n
-			address    : in  std_logic_vector(2 downto 0)  := (others => 'X'); -- address
-			byteenable : in  std_logic_vector(3 downto 0)  := (others => 'X'); -- byteenable
-			read       : in  std_logic                     := 'X';             -- read
-			readdata   : out std_logic_vector(31 downto 0);                    -- readdata
-			write      : in  std_logic                     := 'X';             -- write
-			writedata  : in  std_logic_vector(31 downto 0) := (others => 'X'); -- writedata
-			pwm        : out std_logic_vector(3 downto 0)                      -- pwm
-		);
-	end component PWMn;
 
 	component tutorial01_RAM is
 		port (
@@ -187,7 +151,7 @@ architecture rtl of tutorial01 is
 		);
 	end component tutorial01_TIMER0;
 
-	component WS2812_RAM is
+	component WS2812_RAM_INT is
 		generic (
 			NUM_DIODES : integer := 2
 		);
@@ -200,48 +164,34 @@ architecture rtl of tutorial01 is
 			readdata     : out std_logic_vector(31 downto 0);                    -- readdata
 			write        : in  std_logic                     := 'X';             -- write
 			writedata    : in  std_logic_vector(31 downto 0) := (others => 'X'); -- writedata
+			irq          : out std_logic;                                        -- irq
+			led_out      : out std_logic;                                        -- led_out
 			m_address    : out std_logic_vector(16 downto 0);                    -- address
 			m_byteenable : out std_logic_vector(3 downto 0);                     -- byteenable
 			m_read       : out std_logic;                                        -- read
 			m_readdata   : in  std_logic_vector(31 downto 0) := (others => 'X'); -- readdata
 			m_write      : out std_logic;                                        -- write
-			m_writedata  : out std_logic_vector(31 downto 0);                    -- writedata
-			led_out      : out std_logic                                         -- led_out
+			m_writedata  : out std_logic_vector(31 downto 0)                     -- writedata
 		);
-	end component WS2812_RAM;
-
-	component SEG7 is
-		port (
-			clk        : in  std_logic                     := 'X';             -- clk
-			reset_n    : in  std_logic                     := 'X';             -- reset_n
-			address    : in  std_logic_vector(2 downto 0)  := (others => 'X'); -- address
-			byteenable : in  std_logic_vector(3 downto 0)  := (others => 'X'); -- byteenable
-			read       : in  std_logic                     := 'X';             -- read
-			readdata   : out std_logic_vector(31 downto 0);                    -- readdata
-			write      : in  std_logic                     := 'X';             -- write
-			writedata  : in  std_logic_vector(31 downto 0) := (others => 'X'); -- writedata
-			segment    : out std_logic_vector(7 downto 0);                     -- segment
-			display    : out std_logic_vector(3 downto 0)                      -- display
-		);
-	end component SEG7;
+	end component WS2812_RAM_INT;
 
 	component tutorial01_mm_interconnect_0 is
 		port (
-			PLL_c0_clk                                     : in  std_logic                     := 'X';             -- clk
-			WS2812_RAM_0_reset_reset_bridge_in_reset_reset : in  std_logic                     := 'X';             -- reset
-			WS2812_RAM_0_avalon_master_address             : in  std_logic_vector(16 downto 0) := (others => 'X'); -- address
-			WS2812_RAM_0_avalon_master_byteenable          : in  std_logic_vector(3 downto 0)  := (others => 'X'); -- byteenable
-			WS2812_RAM_0_avalon_master_read                : in  std_logic                     := 'X';             -- read
-			WS2812_RAM_0_avalon_master_readdata            : out std_logic_vector(31 downto 0);                    -- readdata
-			WS2812_RAM_0_avalon_master_write               : in  std_logic                     := 'X';             -- write
-			WS2812_RAM_0_avalon_master_writedata           : in  std_logic_vector(31 downto 0) := (others => 'X'); -- writedata
-			RAM_WS2812_s2_address                          : out std_logic_vector(4 downto 0);                     -- address
-			RAM_WS2812_s2_write                            : out std_logic;                                        -- write
-			RAM_WS2812_s2_readdata                         : in  std_logic_vector(31 downto 0) := (others => 'X'); -- readdata
-			RAM_WS2812_s2_writedata                        : out std_logic_vector(31 downto 0);                    -- writedata
-			RAM_WS2812_s2_byteenable                       : out std_logic_vector(3 downto 0);                     -- byteenable
-			RAM_WS2812_s2_chipselect                       : out std_logic;                                        -- chipselect
-			RAM_WS2812_s2_clken                            : out std_logic                                         -- clken
+			PLL_c0_clk                                         : in  std_logic                     := 'X';             -- clk
+			WS2812_RAM_INT_0_reset_reset_bridge_in_reset_reset : in  std_logic                     := 'X';             -- reset
+			WS2812_RAM_INT_0_avalon_master_address             : in  std_logic_vector(16 downto 0) := (others => 'X'); -- address
+			WS2812_RAM_INT_0_avalon_master_byteenable          : in  std_logic_vector(3 downto 0)  := (others => 'X'); -- byteenable
+			WS2812_RAM_INT_0_avalon_master_read                : in  std_logic                     := 'X';             -- read
+			WS2812_RAM_INT_0_avalon_master_readdata            : out std_logic_vector(31 downto 0);                    -- readdata
+			WS2812_RAM_INT_0_avalon_master_write               : in  std_logic                     := 'X';             -- write
+			WS2812_RAM_INT_0_avalon_master_writedata           : in  std_logic_vector(31 downto 0) := (others => 'X'); -- writedata
+			RAM_WS2812_s2_address                              : out std_logic_vector(4 downto 0);                     -- address
+			RAM_WS2812_s2_write                                : out std_logic;                                        -- write
+			RAM_WS2812_s2_readdata                             : in  std_logic_vector(31 downto 0) := (others => 'X'); -- readdata
+			RAM_WS2812_s2_writedata                            : out std_logic_vector(31 downto 0);                    -- writedata
+			RAM_WS2812_s2_byteenable                           : out std_logic_vector(3 downto 0);                     -- byteenable
+			RAM_WS2812_s2_chipselect                           : out std_logic;                                        -- chipselect
+			RAM_WS2812_s2_clken                                : out std_logic                                         -- clken
 		);
 	end component tutorial01_mm_interconnect_0;
 
@@ -263,12 +213,6 @@ architecture rtl of tutorial01 is
 			CPU_instruction_master_waitrequest                    : out std_logic;                                        -- waitrequest
 			CPU_instruction_master_read                           : in  std_logic                     := 'X';             -- read
 			CPU_instruction_master_readdata                       : out std_logic_vector(31 downto 0);                    -- readdata
-			a_7SEG_0_avalon_slave_0_address                       : out std_logic_vector(2 downto 0);                     -- address
-			a_7SEG_0_avalon_slave_0_write                         : out std_logic;                                        -- write
-			a_7SEG_0_avalon_slave_0_read                          : out std_logic;                                        -- read
-			a_7SEG_0_avalon_slave_0_readdata                      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- readdata
-			a_7SEG_0_avalon_slave_0_writedata                     : out std_logic_vector(31 downto 0);                    -- writedata
-			a_7SEG_0_avalon_slave_0_byteenable                    : out std_logic_vector(3 downto 0);                     -- byteenable
 			CPU_debug_mem_slave_address                           : out std_logic_vector(8 downto 0);                     -- address
 			CPU_debug_mem_slave_write                             : out std_logic;                                        -- write
 			CPU_debug_mem_slave_read                              : out std_logic;                                        -- read
@@ -279,12 +223,6 @@ architecture rtl of tutorial01 is
 			CPU_debug_mem_slave_debugaccess                       : out std_logic;                                        -- debugaccess
 			CPU_ID_control_slave_address                          : out std_logic_vector(0 downto 0);                     -- address
 			CPU_ID_control_slave_readdata                         : in  std_logic_vector(31 downto 0) := (others => 'X'); -- readdata
-			Encoder_0_avalon_slave_0_address                      : out std_logic_vector(0 downto 0);                     -- address
-			Encoder_0_avalon_slave_0_write                        : out std_logic;                                        -- write
-			Encoder_0_avalon_slave_0_read                         : out std_logic;                                        -- read
-			Encoder_0_avalon_slave_0_readdata                     : in  std_logic_vector(31 downto 0) := (others => 'X'); -- readdata
-			Encoder_0_avalon_slave_0_writedata                    : out std_logic_vector(31 downto 0);                    -- writedata
-			Encoder_0_avalon_slave_0_byteenable                   : out std_logic_vector(3 downto 0);                     -- byteenable
 			JTAG_UART_avalon_jtag_slave_address                   : out std_logic_vector(0 downto 0);                     -- address
 			JTAG_UART_avalon_jtag_slave_write                     : out std_logic;                                        -- write
 			JTAG_UART_avalon_jtag_slave_read                      : out std_logic;                                        -- read
@@ -297,12 +235,6 @@ architecture rtl of tutorial01 is
 			PLL_pll_slave_read                                    : out std_logic;                                        -- read
 			PLL_pll_slave_readdata                                : in  std_logic_vector(31 downto 0) := (others => 'X'); -- readdata
 			PLL_pll_slave_writedata                               : out std_logic_vector(31 downto 0);                    -- writedata
-			PWM_avalon_slave_0_address                            : out std_logic_vector(2 downto 0);                     -- address
-			PWM_avalon_slave_0_write                              : out std_logic;                                        -- write
-			PWM_avalon_slave_0_read                               : out std_logic;                                        -- read
-			PWM_avalon_slave_0_readdata                           : in  std_logic_vector(31 downto 0) := (others => 'X'); -- readdata
-			PWM_avalon_slave_0_writedata                          : out std_logic_vector(31 downto 0);                    -- writedata
-			PWM_avalon_slave_0_byteenable                         : out std_logic_vector(3 downto 0);                     -- byteenable
 			RAM_s1_address                                        : out std_logic_vector(12 downto 0);                    -- address
 			RAM_s1_write                                          : out std_logic;                                        -- write
 			RAM_s1_readdata                                       : in  std_logic_vector(31 downto 0) := (others => 'X'); -- readdata
@@ -322,12 +254,12 @@ architecture rtl of tutorial01 is
 			TIMER0_s1_readdata                                    : in  std_logic_vector(15 downto 0) := (others => 'X'); -- readdata
 			TIMER0_s1_writedata                                   : out std_logic_vector(15 downto 0);                    -- writedata
 			TIMER0_s1_chipselect                                  : out std_logic;                                        -- chipselect
-			WS2812_RAM_0_avalon_slave_0_address                   : out std_logic_vector(2 downto 0);                     -- address
-			WS2812_RAM_0_avalon_slave_0_write                     : out std_logic;                                        -- write
-			WS2812_RAM_0_avalon_slave_0_read                      : out std_logic;                                        -- read
-			WS2812_RAM_0_avalon_slave_0_readdata                  : in  std_logic_vector(31 downto 0) := (others => 'X'); -- readdata
-			WS2812_RAM_0_avalon_slave_0_writedata                 : out std_logic_vector(31 downto 0);                    -- writedata
-			WS2812_RAM_0_avalon_slave_0_byteenable                : out std_logic_vector(3 downto 0)                      -- byteenable
+			WS2812_RAM_INT_0_avalon_slave_0_address               : out std_logic_vector(2 downto 0);                     -- address
+			WS2812_RAM_INT_0_avalon_slave_0_write                 : out std_logic;                                        -- write
+			WS2812_RAM_INT_0_avalon_slave_0_read                  : out std_logic;                                        -- read
+			WS2812_RAM_INT_0_avalon_slave_0_readdata              : in  std_logic_vector(31 downto 0) := (others => 'X'); -- readdata
+			WS2812_RAM_INT_0_avalon_slave_0_writedata             : out std_logic_vector(31 downto 0);                    -- writedata
+			WS2812_RAM_INT_0_avalon_slave_0_byteenable            : out std_logic_vector(3 downto 0)                      -- byteenable
 		);
 	end component tutorial01_mm_interconnect_1;
 
@@ -337,6 +269,7 @@ architecture rtl of tutorial01 is
 			reset         : in  std_logic                     := 'X'; -- reset
 			receiver0_irq : in  std_logic                     := 'X'; -- irq
 			receiver1_irq : in  std_logic                     := 'X'; -- irq
+			receiver2_irq : in  std_logic                     := 'X'; -- irq
 			sender_irq    : out std_logic_vector(31 downto 0)         -- irq
 		);
 	end component tutorial01_irq_mapper;
@@ -473,13 +406,13 @@ architecture rtl of tutorial01 is
 		);
 	end component tutorial01_rst_controller_001;
 
-	signal pll_c0_clk                                                    : std_logic;                     -- PLL:c0 -> [CPU:clk, CPU_ID:clock, Encoder_0:clk, JTAG_UART:clk, PWM:clk, RAM:clk, RAM_WS2812:clk, TIMER0:clk, WS2812_RAM_0:clk, a_7SEG_0:clk, irq_mapper:clk, mm_interconnect_0:PLL_c0_clk, mm_interconnect_1:PLL_c0_clk, rst_controller:clk]
-	signal ws2812_ram_0_avalon_master_readdata                           : std_logic_vector(31 downto 0); -- mm_interconnect_0:WS2812_RAM_0_avalon_master_readdata -> WS2812_RAM_0:m_readdata
-	signal ws2812_ram_0_avalon_master_address                            : std_logic_vector(16 downto 0); -- WS2812_RAM_0:m_address -> mm_interconnect_0:WS2812_RAM_0_avalon_master_address
-	signal ws2812_ram_0_avalon_master_byteenable                         : std_logic_vector(3 downto 0);  -- WS2812_RAM_0:m_byteenable -> mm_interconnect_0:WS2812_RAM_0_avalon_master_byteenable
-	signal ws2812_ram_0_avalon_master_read                               : std_logic;                     -- WS2812_RAM_0:m_read -> mm_interconnect_0:WS2812_RAM_0_avalon_master_read
-	signal ws2812_ram_0_avalon_master_write                              : std_logic;                     -- WS2812_RAM_0:m_write -> mm_interconnect_0:WS2812_RAM_0_avalon_master_write
-	signal ws2812_ram_0_avalon_master_writedata                          : std_logic_vector(31 downto 0); -- WS2812_RAM_0:m_writedata -> mm_interconnect_0:WS2812_RAM_0_avalon_master_writedata
+	signal pll_c0_clk                                                    : std_logic;                     -- PLL:c0 -> [CPU:clk, CPU_ID:clock, JTAG_UART:clk, RAM:clk, RAM_WS2812:clk, TIMER0:clk, WS2812_RAM_INT_0:clk, irq_mapper:clk, mm_interconnect_0:PLL_c0_clk, mm_interconnect_1:PLL_c0_clk, rst_controller:clk]
+	signal ws2812_ram_int_0_avalon_master_readdata                       : std_logic_vector(31 downto 0); -- mm_interconnect_0:WS2812_RAM_INT_0_avalon_master_readdata -> WS2812_RAM_INT_0:m_readdata
+	signal ws2812_ram_int_0_avalon_master_address                        : std_logic_vector(16 downto 0); -- WS2812_RAM_INT_0:m_address -> mm_interconnect_0:WS2812_RAM_INT_0_avalon_master_address
+	signal ws2812_ram_int_0_avalon_master_byteenable                     : std_logic_vector(3 downto 0);  -- WS2812_RAM_INT_0:m_byteenable -> mm_interconnect_0:WS2812_RAM_INT_0_avalon_master_byteenable
+	signal ws2812_ram_int_0_avalon_master_read                           : std_logic;                     -- WS2812_RAM_INT_0:m_read -> mm_interconnect_0:WS2812_RAM_INT_0_avalon_master_read
+	signal ws2812_ram_int_0_avalon_master_write                          : std_logic;                     -- WS2812_RAM_INT_0:m_write -> mm_interconnect_0:WS2812_RAM_INT_0_avalon_master_write
+	signal ws2812_ram_int_0_avalon_master_writedata                      : std_logic_vector(31 downto 0); -- WS2812_RAM_INT_0:m_writedata -> mm_interconnect_0:WS2812_RAM_INT_0_avalon_master_writedata
 	signal mm_interconnect_0_ram_ws2812_s2_chipselect                    : std_logic;                     -- mm_interconnect_0:RAM_WS2812_s2_chipselect -> RAM_WS2812:chipselect2
 	signal mm_interconnect_0_ram_ws2812_s2_readdata                      : std_logic_vector(31 downto 0); -- RAM_WS2812:readdata2 -> mm_interconnect_0:RAM_WS2812_s2_readdata
 	signal mm_interconnect_0_ram_ws2812_s2_address                       : std_logic_vector(4 downto 0);  -- mm_interconnect_0:RAM_WS2812_s2_address -> RAM_WS2812:address2
@@ -506,30 +439,12 @@ architecture rtl of tutorial01 is
 	signal mm_interconnect_1_jtag_uart_avalon_jtag_slave_read            : std_logic;                     -- mm_interconnect_1:JTAG_UART_avalon_jtag_slave_read -> mm_interconnect_1_jtag_uart_avalon_jtag_slave_read:in
 	signal mm_interconnect_1_jtag_uart_avalon_jtag_slave_write           : std_logic;                     -- mm_interconnect_1:JTAG_UART_avalon_jtag_slave_write -> mm_interconnect_1_jtag_uart_avalon_jtag_slave_write:in
 	signal mm_interconnect_1_jtag_uart_avalon_jtag_slave_writedata       : std_logic_vector(31 downto 0); -- mm_interconnect_1:JTAG_UART_avalon_jtag_slave_writedata -> JTAG_UART:av_writedata
-	signal mm_interconnect_1_pwm_avalon_slave_0_readdata                 : std_logic_vector(31 downto 0); -- PWM:readdata -> mm_interconnect_1:PWM_avalon_slave_0_readdata
-	signal mm_interconnect_1_pwm_avalon_slave_0_address                  : std_logic_vector(2 downto 0);  -- mm_interconnect_1:PWM_avalon_slave_0_address -> PWM:address
-	signal mm_interconnect_1_pwm_avalon_slave_0_read                     : std_logic;                     -- mm_interconnect_1:PWM_avalon_slave_0_read -> PWM:read
-	signal mm_interconnect_1_pwm_avalon_slave_0_byteenable               : std_logic_vector(3 downto 0);  -- mm_interconnect_1:PWM_avalon_slave_0_byteenable -> PWM:byteenable
-	signal mm_interconnect_1_pwm_avalon_slave_0_write                    : std_logic;                     -- mm_interconnect_1:PWM_avalon_slave_0_write -> PWM:write
-	signal mm_interconnect_1_pwm_avalon_slave_0_writedata                : std_logic_vector(31 downto 0); -- mm_interconnect_1:PWM_avalon_slave_0_writedata -> PWM:writedata
-	signal mm_interconnect_1_a_7seg_0_avalon_slave_0_readdata            : std_logic_vector(31 downto 0); -- a_7SEG_0:readdata -> mm_interconnect_1:a_7SEG_0_avalon_slave_0_readdata
-	signal mm_interconnect_1_a_7seg_0_avalon_slave_0_address             : std_logic_vector(2 downto 0);  -- mm_interconnect_1:a_7SEG_0_avalon_slave_0_address -> a_7SEG_0:address
-	signal mm_interconnect_1_a_7seg_0_avalon_slave_0_read                : std_logic;                     -- mm_interconnect_1:a_7SEG_0_avalon_slave_0_read -> a_7SEG_0:read
-	signal mm_interconnect_1_a_7seg_0_avalon_slave_0_byteenable          : std_logic_vector(3 downto 0);  -- mm_interconnect_1:a_7SEG_0_avalon_slave_0_byteenable -> a_7SEG_0:byteenable
-	signal mm_interconnect_1_a_7seg_0_avalon_slave_0_write               : std_logic;                     -- mm_interconnect_1:a_7SEG_0_avalon_slave_0_write -> a_7SEG_0:write
-	signal mm_interconnect_1_a_7seg_0_avalon_slave_0_writedata           : std_logic_vector(31 downto 0); -- mm_interconnect_1:a_7SEG_0_avalon_slave_0_writedata -> a_7SEG_0:writedata
-	signal mm_interconnect_1_encoder_0_avalon_slave_0_readdata           : std_logic_vector(31 downto 0); -- Encoder_0:readdata -> mm_interconnect_1:Encoder_0_avalon_slave_0_readdata
-	signal mm_interconnect_1_encoder_0_avalon_slave_0_address            : std_logic_vector(0 downto 0);  -- mm_interconnect_1:Encoder_0_avalon_slave_0_address -> Encoder_0:address
-	signal mm_interconnect_1_encoder_0_avalon_slave_0_read               : std_logic;                     -- mm_interconnect_1:Encoder_0_avalon_slave_0_read -> Encoder_0:read
-	signal mm_interconnect_1_encoder_0_avalon_slave_0_byteenable         : std_logic_vector(3 downto 0);  -- mm_interconnect_1:Encoder_0_avalon_slave_0_byteenable -> Encoder_0:byteenable
-	signal mm_interconnect_1_encoder_0_avalon_slave_0_write              : std_logic;                     -- mm_interconnect_1:Encoder_0_avalon_slave_0_write -> Encoder_0:write
-	signal mm_interconnect_1_encoder_0_avalon_slave_0_writedata          : std_logic_vector(31 downto 0); -- mm_interconnect_1:Encoder_0_avalon_slave_0_writedata -> Encoder_0:writedata
-	signal mm_interconnect_1_ws2812_ram_0_avalon_slave_0_readdata        : std_logic_vector(31 downto 0); -- WS2812_RAM_0:readdata -> mm_interconnect_1:WS2812_RAM_0_avalon_slave_0_readdata
-	signal mm_interconnect_1_ws2812_ram_0_avalon_slave_0_address         : std_logic_vector(2 downto 0);  -- mm_interconnect_1:WS2812_RAM_0_avalon_slave_0_address -> WS2812_RAM_0:address
-	signal mm_interconnect_1_ws2812_ram_0_avalon_slave_0_read            : std_logic;                     -- mm_interconnect_1:WS2812_RAM_0_avalon_slave_0_read -> WS2812_RAM_0:read
-	signal mm_interconnect_1_ws2812_ram_0_avalon_slave_0_byteenable      : std_logic_vector(3 downto 0);  -- mm_interconnect_1:WS2812_RAM_0_avalon_slave_0_byteenable -> WS2812_RAM_0:byteenable
-	signal mm_interconnect_1_ws2812_ram_0_avalon_slave_0_write           : std_logic;                     -- mm_interconnect_1:WS2812_RAM_0_avalon_slave_0_write -> WS2812_RAM_0:write
-	signal mm_interconnect_1_ws2812_ram_0_avalon_slave_0_writedata       : std_logic_vector(31 downto 0); -- mm_interconnect_1:WS2812_RAM_0_avalon_slave_0_writedata -> WS2812_RAM_0:writedata
+	signal mm_interconnect_1_ws2812_ram_int_0_avalon_slave_0_readdata    : std_logic_vector(31 downto 0); -- WS2812_RAM_INT_0:readdata -> mm_interconnect_1:WS2812_RAM_INT_0_avalon_slave_0_readdata
+	signal mm_interconnect_1_ws2812_ram_int_0_avalon_slave_0_address     : std_logic_vector(2 downto 0);  -- mm_interconnect_1:WS2812_RAM_INT_0_avalon_slave_0_address -> WS2812_RAM_INT_0:address
+	signal mm_interconnect_1_ws2812_ram_int_0_avalon_slave_0_read        : std_logic;                     -- mm_interconnect_1:WS2812_RAM_INT_0_avalon_slave_0_read -> WS2812_RAM_INT_0:read
+	signal mm_interconnect_1_ws2812_ram_int_0_avalon_slave_0_byteenable  : std_logic_vector(3 downto 0);  -- mm_interconnect_1:WS2812_RAM_INT_0_avalon_slave_0_byteenable -> WS2812_RAM_INT_0:byteenable
+	signal mm_interconnect_1_ws2812_ram_int_0_avalon_slave_0_write       : std_logic;                     -- mm_interconnect_1:WS2812_RAM_INT_0_avalon_slave_0_write -> WS2812_RAM_INT_0:write
+	signal mm_interconnect_1_ws2812_ram_int_0_avalon_slave_0_writedata   : std_logic_vector(31 downto 0); -- mm_interconnect_1:WS2812_RAM_INT_0_avalon_slave_0_writedata -> WS2812_RAM_INT_0:writedata
 	signal mm_interconnect_1_cpu_id_control_slave_readdata               : std_logic_vector(31 downto 0); -- CPU_ID:readdata -> mm_interconnect_1:CPU_ID_control_slave_readdata
 	signal mm_interconnect_1_cpu_id_control_slave_address                : std_logic_vector(0 downto 0);  -- mm_interconnect_1:CPU_ID_control_slave_address -> CPU_ID:address
 	signal mm_interconnect_1_cpu_debug_mem_slave_readdata                : std_logic_vector(31 downto 0); -- CPU:debug_mem_slave_readdata -> mm_interconnect_1:CPU_debug_mem_slave_readdata
@@ -564,17 +479,18 @@ architecture rtl of tutorial01 is
 	signal mm_interconnect_1_ram_ws2812_s1_write                         : std_logic;                     -- mm_interconnect_1:RAM_WS2812_s1_write -> RAM_WS2812:write
 	signal mm_interconnect_1_ram_ws2812_s1_writedata                     : std_logic_vector(31 downto 0); -- mm_interconnect_1:RAM_WS2812_s1_writedata -> RAM_WS2812:writedata
 	signal mm_interconnect_1_ram_ws2812_s1_clken                         : std_logic;                     -- mm_interconnect_1:RAM_WS2812_s1_clken -> RAM_WS2812:clken
-	signal irq_mapper_receiver0_irq                                      : std_logic;                     -- JTAG_UART:av_irq -> irq_mapper:receiver0_irq
-	signal irq_mapper_receiver1_irq                                      : std_logic;                     -- TIMER0:irq -> irq_mapper:receiver1_irq
+	signal irq_mapper_receiver0_irq                                      : std_logic;                     -- WS2812_RAM_INT_0:irq -> irq_mapper:receiver0_irq
+	signal irq_mapper_receiver1_irq                                      : std_logic;                     -- JTAG_UART:av_irq -> irq_mapper:receiver1_irq
+	signal irq_mapper_receiver2_irq                                      : std_logic;                     -- TIMER0:irq -> irq_mapper:receiver2_irq
 	signal cpu_irq_irq                                                   : std_logic_vector(31 downto 0); -- irq_mapper:sender_irq -> CPU:irq
-	signal rst_controller_reset_out_reset                                : std_logic;                     -- rst_controller:reset_out -> [RAM:reset, RAM_WS2812:reset, irq_mapper:reset, mm_interconnect_0:WS2812_RAM_0_reset_reset_bridge_in_reset_reset, mm_interconnect_1:CPU_reset_reset_bridge_in_reset_reset, rst_controller_reset_out_reset:in, rst_translator:in_reset]
+	signal rst_controller_reset_out_reset                                : std_logic;                     -- rst_controller:reset_out -> [RAM:reset, RAM_WS2812:reset, irq_mapper:reset, mm_interconnect_0:WS2812_RAM_INT_0_reset_reset_bridge_in_reset_reset, mm_interconnect_1:CPU_reset_reset_bridge_in_reset_reset, rst_controller_reset_out_reset:in, rst_translator:in_reset]
 	signal rst_controller_reset_out_reset_req                            : std_logic;                     -- rst_controller:reset_req -> [CPU:reset_req, RAM:reset_req, RAM_WS2812:reset_req, rst_translator:reset_req_in]
 	signal rst_controller_001_reset_out_reset                            : std_logic;                     -- rst_controller_001:reset_out -> [PLL:reset, mm_interconnect_1:PLL_inclk_interface_reset_reset_bridge_in_reset_reset]
 	signal reset_reset_n_ports_inv                                       : std_logic;                     -- reset_reset_n:inv -> [rst_controller:reset_in0, rst_controller_001:reset_in0]
 	signal mm_interconnect_1_jtag_uart_avalon_jtag_slave_read_ports_inv  : std_logic;                     -- mm_interconnect_1_jtag_uart_avalon_jtag_slave_read:inv -> JTAG_UART:av_read_n
 	signal mm_interconnect_1_jtag_uart_avalon_jtag_slave_write_ports_inv : std_logic;                     -- mm_interconnect_1_jtag_uart_avalon_jtag_slave_write:inv -> JTAG_UART:av_write_n
 	signal mm_interconnect_1_timer0_s1_write_ports_inv                   : std_logic;                     -- mm_interconnect_1_timer0_s1_write:inv -> TIMER0:write_n
-	signal rst_controller_reset_out_reset_ports_inv                      : std_logic;                     -- rst_controller_reset_out_reset:inv -> [CPU:reset_n, CPU_ID:reset_n, Encoder_0:reset_n, JTAG_UART:rst_n, PWM:reset_n, TIMER0:reset_n, WS2812_RAM_0:reset_n, a_7SEG_0:reset_n]
+	signal rst_controller_reset_out_reset_ports_inv                      : std_logic;                     -- rst_controller_reset_out_reset:inv -> [CPU:reset_n, CPU_ID:reset_n, JTAG_UART:rst_n, TIMER0:reset_n, WS2812_RAM_INT_0:reset_n]
 
 begin
 
@@ -616,19 +532,6 @@ begin
 			address  => mm_interconnect_1_cpu_id_control_slave_address(0)  --              .address
 		);
 
-	encoder_0 : component ENCODER
-		port map (
-			clk        => pll_c0_clk,                                            --          clock.clk
-			reset_n    => rst_controller_reset_out_reset_ports_inv,              --          reset.reset_n
-			address    => mm_interconnect_1_encoder_0_avalon_slave_0_address(0), -- avalon_slave_0.address
-			byteenable => mm_interconnect_1_encoder_0_avalon_slave_0_byteenable, --               .byteenable
-			read       => mm_interconnect_1_encoder_0_avalon_slave_0_read,       --               .read
-			readdata   => mm_interconnect_1_encoder_0_avalon_slave_0_readdata,   --               .readdata
-			write      => mm_interconnect_1_encoder_0_avalon_slave_0_write,      --               .write
-			writedata  => mm_interconnect_1_encoder_0_avalon_slave_0_writedata,  --               .writedata
-			encoderAB  => encoder_encoder                                        --        encoder.encoder
-		);
-
 	jtag_uart : component tutorial01_JTAG_UART
 		port map (
 			clk            => pll_c0_clk,                                                    --               clk.clk
@@ -640,7 +543,7 @@ begin
 			av_write_n     => mm_interconnect_1_jtag_uart_avalon_jtag_slave_write_ports_inv, --                  .write_n
 			av_writedata   => mm_interconnect_1_jtag_uart_avalon_jtag_slave_writedata,       --                  .writedata
 			av_waitrequest => mm_interconnect_1_jtag_uart_avalon_jtag_slave_waitrequest,     --                  .waitrequest
-			av_irq         => irq_mapper_receiver0_irq                                       --               irq.irq
+			av_irq         => irq_mapper_receiver1_irq                                       --               irq.irq
 		);
 
 	pll : component tutorial01_PLL
@@ -669,23 +572,6 @@ begin
 			scanclkena         => '0',                                       --           (terminated)
 			scandata           => '0',                                       --           (terminated)
 			configupdate       => '0'                                        --           (terminated)
-		);
-
-	pwm : component PWMn
-		generic map (
-			CHANNELS => 4,
-			ADDRBITS => 3
-		)
-		port map (
-			clk        => pll_c0_clk,                                      --          clock.clk
-			reset_n    => rst_controller_reset_out_reset_ports_inv,        --          reset.reset_n
-			address    => mm_interconnect_1_pwm_avalon_slave_0_address,    -- avalon_slave_0.address
-			byteenable => mm_interconnect_1_pwm_avalon_slave_0_byteenable, --               .byteenable
-			read       => mm_interconnect_1_pwm_avalon_slave_0_read,       --               .read
-			readdata   => mm_interconnect_1_pwm_avalon_slave_0_readdata,   --               .readdata
-			write      => mm_interconnect_1_pwm_avalon_slave_0_write,      --               .write
-			writedata  => mm_interconnect_1_pwm_avalon_slave_0_writedata,  --               .writedata
-			pwm        => pwm_pwm                                          --            pwm.pwm
 		);
 
 	ram : component tutorial01_RAM
@@ -734,147 +620,116 @@ begin
 			readdata   => mm_interconnect_1_timer0_s1_readdata,        --      .readdata
 			chipselect => mm_interconnect_1_timer0_s1_chipselect,      --      .chipselect
 			write_n    => mm_interconnect_1_timer0_s1_write_ports_inv, --      .write_n
-			irq        => irq_mapper_receiver1_irq                     --   irq.irq
+			irq        => irq_mapper_receiver2_irq                     --   irq.irq
 		);
 
-	ws2812_ram_0 : component WS2812_RAM
+	ws2812_ram_int_0 : component WS2812_RAM_INT
 		generic map (
 			NUM_DIODES => 2
 		)
 		port map (
-			clk          => pll_c0_clk,                                               --          clock.clk
-			reset_n      => rst_controller_reset_out_reset_ports_inv,                 --          reset.reset_n
-			address      => mm_interconnect_1_ws2812_ram_0_avalon_slave_0_address,    -- avalon_slave_0.address
-			byteenable   => mm_interconnect_1_ws2812_ram_0_avalon_slave_0_byteenable, --               .byteenable
-			read         => mm_interconnect_1_ws2812_ram_0_avalon_slave_0_read,       --               .read
-			readdata     => mm_interconnect_1_ws2812_ram_0_avalon_slave_0_readdata,   --               .readdata
-			write        => mm_interconnect_1_ws2812_ram_0_avalon_slave_0_write,      --               .write
-			writedata    => mm_interconnect_1_ws2812_ram_0_avalon_slave_0_writedata,  --               .writedata
-			m_address    => ws2812_ram_0_avalon_master_address,                       --  avalon_master.address
-			m_byteenable => ws2812_ram_0_avalon_master_byteenable,                    --               .byteenable
-			m_read       => ws2812_ram_0_avalon_master_read,                          --               .read
-			m_readdata   => ws2812_ram_0_avalon_master_readdata,                      --               .readdata
-			m_write      => ws2812_ram_0_avalon_master_write,                         --               .write
-			m_writedata  => ws2812_ram_0_avalon_master_writedata,                     --               .writedata
-			led_out      => led_out_led_out                                           --        led_out.led_out
-		);
-
-	a_7seg_0 : component SEG7
-		port map (
-			clk        => pll_c0_clk,                                           --          clock.clk
-			reset_n    => rst_controller_reset_out_reset_ports_inv,             --          reset.reset_n
-			address    => mm_interconnect_1_a_7seg_0_avalon_slave_0_address,    -- avalon_slave_0.address
-			byteenable => mm_interconnect_1_a_7seg_0_avalon_slave_0_byteenable, --               .byteenable
-			read       => mm_interconnect_1_a_7seg_0_avalon_slave_0_read,       --               .read
-			readdata   => mm_interconnect_1_a_7seg_0_avalon_slave_0_readdata,   --               .readdata
-			write      => mm_interconnect_1_a_7seg_0_avalon_slave_0_write,      --               .write
-			writedata  => mm_interconnect_1_a_7seg_0_avalon_slave_0_writedata,  --               .writedata
-			segment    => seg7_segment,                                         --        display.segment
-			display    => seg7_display                                          --               .display
+			clk          => pll_c0_clk,                                                   --            clock.clk
+			reset_n      => rst_controller_reset_out_reset_ports_inv,                     --            reset.reset_n
+			address      => mm_interconnect_1_ws2812_ram_int_0_avalon_slave_0_address,    --   avalon_slave_0.address
+			byteenable   => mm_interconnect_1_ws2812_ram_int_0_avalon_slave_0_byteenable, --                 .byteenable
+			read         => mm_interconnect_1_ws2812_ram_int_0_avalon_slave_0_read,       --                 .read
+			readdata     => mm_interconnect_1_ws2812_ram_int_0_avalon_slave_0_readdata,   --                 .readdata
+			write        => mm_interconnect_1_ws2812_ram_int_0_avalon_slave_0_write,      --                 .write
+			writedata    => mm_interconnect_1_ws2812_ram_int_0_avalon_slave_0_writedata,  --                 .writedata
+			irq          => irq_mapper_receiver0_irq,                                     -- interrupt_sender.irq
+			led_out      => led_out_led_out,                                              --          led_out.led_out
+			m_address    => ws2812_ram_int_0_avalon_master_address,                       --    avalon_master.address
+			m_byteenable => ws2812_ram_int_0_avalon_master_byteenable,                    --                 .byteenable
+			m_read       => ws2812_ram_int_0_avalon_master_read,                          --                 .read
+			m_readdata   => ws2812_ram_int_0_avalon_master_readdata,                      --                 .readdata
+			m_write      => ws2812_ram_int_0_avalon_master_write,                         --                 .write
+			m_writedata  => ws2812_ram_int_0_avalon_master_writedata                      --                 .writedata
 		);
 
 	mm_interconnect_0 : component tutorial01_mm_interconnect_0
 		port map (
-			PLL_c0_clk                                     => pll_c0_clk,                                 --                                   PLL_c0.clk
-			WS2812_RAM_0_reset_reset_bridge_in_reset_reset => rst_controller_reset_out_reset,             -- WS2812_RAM_0_reset_reset_bridge_in_reset.reset
-			WS2812_RAM_0_avalon_master_address             => ws2812_ram_0_avalon_master_address,         --               WS2812_RAM_0_avalon_master.address
-			WS2812_RAM_0_avalon_master_byteenable          => ws2812_ram_0_avalon_master_byteenable,      --                                         .byteenable
-			WS2812_RAM_0_avalon_master_read                => ws2812_ram_0_avalon_master_read,            --                                         .read
-			WS2812_RAM_0_avalon_master_readdata            => ws2812_ram_0_avalon_master_readdata,        --                                         .readdata
-			WS2812_RAM_0_avalon_master_write               => ws2812_ram_0_avalon_master_write,           --                                         .write
-			WS2812_RAM_0_avalon_master_writedata           => ws2812_ram_0_avalon_master_writedata,       --                                         .writedata
-			RAM_WS2812_s2_address                          => mm_interconnect_0_ram_ws2812_s2_address,    --                            RAM_WS2812_s2.address
-			RAM_WS2812_s2_write                            => mm_interconnect_0_ram_ws2812_s2_write,      --                                         .write
-			RAM_WS2812_s2_readdata                         => mm_interconnect_0_ram_ws2812_s2_readdata,   --                                         .readdata
-			RAM_WS2812_s2_writedata                        => mm_interconnect_0_ram_ws2812_s2_writedata,  --                                         .writedata
-			RAM_WS2812_s2_byteenable                       => mm_interconnect_0_ram_ws2812_s2_byteenable, --                                         .byteenable
-			RAM_WS2812_s2_chipselect                       => mm_interconnect_0_ram_ws2812_s2_chipselect, --                                         .chipselect
-			RAM_WS2812_s2_clken                            => mm_interconnect_0_ram_ws2812_s2_clken       --                                         .clken
+			PLL_c0_clk                                         => pll_c0_clk,                                 --                                       PLL_c0.clk
+			WS2812_RAM_INT_0_reset_reset_bridge_in_reset_reset => rst_controller_reset_out_reset,             -- WS2812_RAM_INT_0_reset_reset_bridge_in_reset.reset
+			WS2812_RAM_INT_0_avalon_master_address             => ws2812_ram_int_0_avalon_master_address,     --               WS2812_RAM_INT_0_avalon_master.address
+			WS2812_RAM_INT_0_avalon_master_byteenable          => ws2812_ram_int_0_avalon_master_byteenable,  --                                             .byteenable
+			WS2812_RAM_INT_0_avalon_master_read                => ws2812_ram_int_0_avalon_master_read,        --                                             .read
+			WS2812_RAM_INT_0_avalon_master_readdata            => ws2812_ram_int_0_avalon_master_readdata,    --                                             .readdata
+			WS2812_RAM_INT_0_avalon_master_write               => ws2812_ram_int_0_avalon_master_write,       --                                             .write
+			WS2812_RAM_INT_0_avalon_master_writedata           => ws2812_ram_int_0_avalon_master_writedata,   --                                             .writedata
+			RAM_WS2812_s2_address                              => mm_interconnect_0_ram_ws2812_s2_address,    --                                RAM_WS2812_s2.address
+			RAM_WS2812_s2_write                                => mm_interconnect_0_ram_ws2812_s2_write,      --                                             .write
+			RAM_WS2812_s2_readdata                             => mm_interconnect_0_ram_ws2812_s2_readdata,   --                                             .readdata
+			RAM_WS2812_s2_writedata                            => mm_interconnect_0_ram_ws2812_s2_writedata,  --                                             .writedata
+			RAM_WS2812_s2_byteenable                           => mm_interconnect_0_ram_ws2812_s2_byteenable, --                                             .byteenable
+			RAM_WS2812_s2_chipselect                           => mm_interconnect_0_ram_ws2812_s2_chipselect, --                                             .chipselect
+			RAM_WS2812_s2_clken                                => mm_interconnect_0_ram_ws2812_s2_clken       --                                             .clken
 		);
 
 	mm_interconnect_1 : component tutorial01_mm_interconnect_1
 		port map (
-			CLK_clk_clk                                           => clk_clk,                                                   --                                         CLK_clk.clk
-			PLL_c0_clk                                            => pll_c0_clk,                                                --                                          PLL_c0.clk
-			CPU_reset_reset_bridge_in_reset_reset                 => rst_controller_reset_out_reset,                            --                 CPU_reset_reset_bridge_in_reset.reset
-			PLL_inclk_interface_reset_reset_bridge_in_reset_reset => rst_controller_001_reset_out_reset,                        -- PLL_inclk_interface_reset_reset_bridge_in_reset.reset
-			CPU_data_master_address                               => cpu_data_master_address,                                   --                                 CPU_data_master.address
-			CPU_data_master_waitrequest                           => cpu_data_master_waitrequest,                               --                                                .waitrequest
-			CPU_data_master_byteenable                            => cpu_data_master_byteenable,                                --                                                .byteenable
-			CPU_data_master_read                                  => cpu_data_master_read,                                      --                                                .read
-			CPU_data_master_readdata                              => cpu_data_master_readdata,                                  --                                                .readdata
-			CPU_data_master_write                                 => cpu_data_master_write,                                     --                                                .write
-			CPU_data_master_writedata                             => cpu_data_master_writedata,                                 --                                                .writedata
-			CPU_data_master_debugaccess                           => cpu_data_master_debugaccess,                               --                                                .debugaccess
-			CPU_instruction_master_address                        => cpu_instruction_master_address,                            --                          CPU_instruction_master.address
-			CPU_instruction_master_waitrequest                    => cpu_instruction_master_waitrequest,                        --                                                .waitrequest
-			CPU_instruction_master_read                           => cpu_instruction_master_read,                               --                                                .read
-			CPU_instruction_master_readdata                       => cpu_instruction_master_readdata,                           --                                                .readdata
-			a_7SEG_0_avalon_slave_0_address                       => mm_interconnect_1_a_7seg_0_avalon_slave_0_address,         --                         a_7SEG_0_avalon_slave_0.address
-			a_7SEG_0_avalon_slave_0_write                         => mm_interconnect_1_a_7seg_0_avalon_slave_0_write,           --                                                .write
-			a_7SEG_0_avalon_slave_0_read                          => mm_interconnect_1_a_7seg_0_avalon_slave_0_read,            --                                                .read
-			a_7SEG_0_avalon_slave_0_readdata                      => mm_interconnect_1_a_7seg_0_avalon_slave_0_readdata,        --                                                .readdata
-			a_7SEG_0_avalon_slave_0_writedata                     => mm_interconnect_1_a_7seg_0_avalon_slave_0_writedata,       --                                                .writedata
-			a_7SEG_0_avalon_slave_0_byteenable                    => mm_interconnect_1_a_7seg_0_avalon_slave_0_byteenable,      --                                                .byteenable
-			CPU_debug_mem_slave_address                           => mm_interconnect_1_cpu_debug_mem_slave_address,             --                             CPU_debug_mem_slave.address
-			CPU_debug_mem_slave_write                             => mm_interconnect_1_cpu_debug_mem_slave_write,               --                                                .write
-			CPU_debug_mem_slave_read                              => mm_interconnect_1_cpu_debug_mem_slave_read,                --                                                .read
-			CPU_debug_mem_slave_readdata                          => mm_interconnect_1_cpu_debug_mem_slave_readdata,            --                                                .readdata
-			CPU_debug_mem_slave_writedata                         => mm_interconnect_1_cpu_debug_mem_slave_writedata,           --                                                .writedata
-			CPU_debug_mem_slave_byteenable                        => mm_interconnect_1_cpu_debug_mem_slave_byteenable,          --                                                .byteenable
-			CPU_debug_mem_slave_waitrequest                       => mm_interconnect_1_cpu_debug_mem_slave_waitrequest,         --                                                .waitrequest
-			CPU_debug_mem_slave_debugaccess                       => mm_interconnect_1_cpu_debug_mem_slave_debugaccess,         --                                                .debugaccess
-			CPU_ID_control_slave_address                          => mm_interconnect_1_cpu_id_control_slave_address,            --                            CPU_ID_control_slave.address
-			CPU_ID_control_slave_readdata                         => mm_interconnect_1_cpu_id_control_slave_readdata,           --                                                .readdata
-			Encoder_0_avalon_slave_0_address                      => mm_interconnect_1_encoder_0_avalon_slave_0_address,        --                        Encoder_0_avalon_slave_0.address
-			Encoder_0_avalon_slave_0_write                        => mm_interconnect_1_encoder_0_avalon_slave_0_write,          --                                                .write
-			Encoder_0_avalon_slave_0_read                         => mm_interconnect_1_encoder_0_avalon_slave_0_read,           --                                                .read
-			Encoder_0_avalon_slave_0_readdata                     => mm_interconnect_1_encoder_0_avalon_slave_0_readdata,       --                                                .readdata
-			Encoder_0_avalon_slave_0_writedata                    => mm_interconnect_1_encoder_0_avalon_slave_0_writedata,      --                                                .writedata
-			Encoder_0_avalon_slave_0_byteenable                   => mm_interconnect_1_encoder_0_avalon_slave_0_byteenable,     --                                                .byteenable
-			JTAG_UART_avalon_jtag_slave_address                   => mm_interconnect_1_jtag_uart_avalon_jtag_slave_address,     --                     JTAG_UART_avalon_jtag_slave.address
-			JTAG_UART_avalon_jtag_slave_write                     => mm_interconnect_1_jtag_uart_avalon_jtag_slave_write,       --                                                .write
-			JTAG_UART_avalon_jtag_slave_read                      => mm_interconnect_1_jtag_uart_avalon_jtag_slave_read,        --                                                .read
-			JTAG_UART_avalon_jtag_slave_readdata                  => mm_interconnect_1_jtag_uart_avalon_jtag_slave_readdata,    --                                                .readdata
-			JTAG_UART_avalon_jtag_slave_writedata                 => mm_interconnect_1_jtag_uart_avalon_jtag_slave_writedata,   --                                                .writedata
-			JTAG_UART_avalon_jtag_slave_waitrequest               => mm_interconnect_1_jtag_uart_avalon_jtag_slave_waitrequest, --                                                .waitrequest
-			JTAG_UART_avalon_jtag_slave_chipselect                => mm_interconnect_1_jtag_uart_avalon_jtag_slave_chipselect,  --                                                .chipselect
-			PLL_pll_slave_address                                 => mm_interconnect_1_pll_pll_slave_address,                   --                                   PLL_pll_slave.address
-			PLL_pll_slave_write                                   => mm_interconnect_1_pll_pll_slave_write,                     --                                                .write
-			PLL_pll_slave_read                                    => mm_interconnect_1_pll_pll_slave_read,                      --                                                .read
-			PLL_pll_slave_readdata                                => mm_interconnect_1_pll_pll_slave_readdata,                  --                                                .readdata
-			PLL_pll_slave_writedata                               => mm_interconnect_1_pll_pll_slave_writedata,                 --                                                .writedata
-			PWM_avalon_slave_0_address                            => mm_interconnect_1_pwm_avalon_slave_0_address,              --                              PWM_avalon_slave_0.address
-			PWM_avalon_slave_0_write                              => mm_interconnect_1_pwm_avalon_slave_0_write,                --                                                .write
-			PWM_avalon_slave_0_read                               => mm_interconnect_1_pwm_avalon_slave_0_read,                 --                                                .read
-			PWM_avalon_slave_0_readdata                           => mm_interconnect_1_pwm_avalon_slave_0_readdata,             --                                                .readdata
-			PWM_avalon_slave_0_writedata                          => mm_interconnect_1_pwm_avalon_slave_0_writedata,            --                                                .writedata
-			PWM_avalon_slave_0_byteenable                         => mm_interconnect_1_pwm_avalon_slave_0_byteenable,           --                                                .byteenable
-			RAM_s1_address                                        => mm_interconnect_1_ram_s1_address,                          --                                          RAM_s1.address
-			RAM_s1_write                                          => mm_interconnect_1_ram_s1_write,                            --                                                .write
-			RAM_s1_readdata                                       => mm_interconnect_1_ram_s1_readdata,                         --                                                .readdata
-			RAM_s1_writedata                                      => mm_interconnect_1_ram_s1_writedata,                        --                                                .writedata
-			RAM_s1_byteenable                                     => mm_interconnect_1_ram_s1_byteenable,                       --                                                .byteenable
-			RAM_s1_chipselect                                     => mm_interconnect_1_ram_s1_chipselect,                       --                                                .chipselect
-			RAM_s1_clken                                          => mm_interconnect_1_ram_s1_clken,                            --                                                .clken
-			RAM_WS2812_s1_address                                 => mm_interconnect_1_ram_ws2812_s1_address,                   --                                   RAM_WS2812_s1.address
-			RAM_WS2812_s1_write                                   => mm_interconnect_1_ram_ws2812_s1_write,                     --                                                .write
-			RAM_WS2812_s1_readdata                                => mm_interconnect_1_ram_ws2812_s1_readdata,                  --                                                .readdata
-			RAM_WS2812_s1_writedata                               => mm_interconnect_1_ram_ws2812_s1_writedata,                 --                                                .writedata
-			RAM_WS2812_s1_byteenable                              => mm_interconnect_1_ram_ws2812_s1_byteenable,                --                                                .byteenable
-			RAM_WS2812_s1_chipselect                              => mm_interconnect_1_ram_ws2812_s1_chipselect,                --                                                .chipselect
-			RAM_WS2812_s1_clken                                   => mm_interconnect_1_ram_ws2812_s1_clken,                     --                                                .clken
-			TIMER0_s1_address                                     => mm_interconnect_1_timer0_s1_address,                       --                                       TIMER0_s1.address
-			TIMER0_s1_write                                       => mm_interconnect_1_timer0_s1_write,                         --                                                .write
-			TIMER0_s1_readdata                                    => mm_interconnect_1_timer0_s1_readdata,                      --                                                .readdata
-			TIMER0_s1_writedata                                   => mm_interconnect_1_timer0_s1_writedata,                     --                                                .writedata
-			TIMER0_s1_chipselect                                  => mm_interconnect_1_timer0_s1_chipselect,                    --                                                .chipselect
-			WS2812_RAM_0_avalon_slave_0_address                   => mm_interconnect_1_ws2812_ram_0_avalon_slave_0_address,     --                     WS2812_RAM_0_avalon_slave_0.address
-			WS2812_RAM_0_avalon_slave_0_write                     => mm_interconnect_1_ws2812_ram_0_avalon_slave_0_write,       --                                                .write
-			WS2812_RAM_0_avalon_slave_0_read                      => mm_interconnect_1_ws2812_ram_0_avalon_slave_0_read,        --                                                .read
-			WS2812_RAM_0_avalon_slave_0_readdata                  => mm_interconnect_1_ws2812_ram_0_avalon_slave_0_readdata,    --                                                .readdata
-			WS2812_RAM_0_avalon_slave_0_writedata                 => mm_interconnect_1_ws2812_ram_0_avalon_slave_0_writedata,   --                                                .writedata
-			WS2812_RAM_0_avalon_slave_0_byteenable                => mm_interconnect_1_ws2812_ram_0_avalon_slave_0_byteenable   --                                                .byteenable
+			CLK_clk_clk                                           => clk_clk,                                                      --                                         CLK_clk.clk
+			PLL_c0_clk                                            => pll_c0_clk,                                                   --                                          PLL_c0.clk
+			CPU_reset_reset_bridge_in_reset_reset                 => rst_controller_reset_out_reset,                               --                 CPU_reset_reset_bridge_in_reset.reset
+			PLL_inclk_interface_reset_reset_bridge_in_reset_reset => rst_controller_001_reset_out_reset,                           -- PLL_inclk_interface_reset_reset_bridge_in_reset.reset
+			CPU_data_master_address                               => cpu_data_master_address,                                      --                                 CPU_data_master.address
+			CPU_data_master_waitrequest                           => cpu_data_master_waitrequest,                                  --                                                .waitrequest
+			CPU_data_master_byteenable                            => cpu_data_master_byteenable,                                   --                                                .byteenable
+			CPU_data_master_read                                  => cpu_data_master_read,                                         --                                                .read
+			CPU_data_master_readdata                              => cpu_data_master_readdata,                                     --                                                .readdata
+			CPU_data_master_write                                 => cpu_data_master_write,                                        --                                                .write
+			CPU_data_master_writedata                             => cpu_data_master_writedata,                                    --                                                .writedata
+			CPU_data_master_debugaccess                           => cpu_data_master_debugaccess,                                  --                                                .debugaccess
+			CPU_instruction_master_address                        => cpu_instruction_master_address,                               --                          CPU_instruction_master.address
+			CPU_instruction_master_waitrequest                    => cpu_instruction_master_waitrequest,                           --                                                .waitrequest
+			CPU_instruction_master_read                           => cpu_instruction_master_read,                                  --                                                .read
+			CPU_instruction_master_readdata                       => cpu_instruction_master_readdata,                              --                                                .readdata
+			CPU_debug_mem_slave_address                           => mm_interconnect_1_cpu_debug_mem_slave_address,                --                             CPU_debug_mem_slave.address
+			CPU_debug_mem_slave_write                             => mm_interconnect_1_cpu_debug_mem_slave_write,                  --                                                .write
+			CPU_debug_mem_slave_read                              => mm_interconnect_1_cpu_debug_mem_slave_read,                   --                                                .read
+			CPU_debug_mem_slave_readdata                          => mm_interconnect_1_cpu_debug_mem_slave_readdata,               --                                                .readdata
+			CPU_debug_mem_slave_writedata                         => mm_interconnect_1_cpu_debug_mem_slave_writedata,              --                                                .writedata
+			CPU_debug_mem_slave_byteenable                        => mm_interconnect_1_cpu_debug_mem_slave_byteenable,             --                                                .byteenable
+			CPU_debug_mem_slave_waitrequest                       => mm_interconnect_1_cpu_debug_mem_slave_waitrequest,            --                                                .waitrequest
+			CPU_debug_mem_slave_debugaccess                       => mm_interconnect_1_cpu_debug_mem_slave_debugaccess,            --                                                .debugaccess
+			CPU_ID_control_slave_address                          => mm_interconnect_1_cpu_id_control_slave_address,               --                            CPU_ID_control_slave.address
+			CPU_ID_control_slave_readdata                         => mm_interconnect_1_cpu_id_control_slave_readdata,              --                                                .readdata
+			JTAG_UART_avalon_jtag_slave_address                   => mm_interconnect_1_jtag_uart_avalon_jtag_slave_address,        --                     JTAG_UART_avalon_jtag_slave.address
+			JTAG_UART_avalon_jtag_slave_write                     => mm_interconnect_1_jtag_uart_avalon_jtag_slave_write,          --                                                .write
+			JTAG_UART_avalon_jtag_slave_read                      => mm_interconnect_1_jtag_uart_avalon_jtag_slave_read,           --                                                .read
+			JTAG_UART_avalon_jtag_slave_readdata                  => mm_interconnect_1_jtag_uart_avalon_jtag_slave_readdata,       --                                                .readdata
+			JTAG_UART_avalon_jtag_slave_writedata                 => mm_interconnect_1_jtag_uart_avalon_jtag_slave_writedata,      --                                                .writedata
+			JTAG_UART_avalon_jtag_slave_waitrequest               => mm_interconnect_1_jtag_uart_avalon_jtag_slave_waitrequest,    --                                                .waitrequest
+			JTAG_UART_avalon_jtag_slave_chipselect                => mm_interconnect_1_jtag_uart_avalon_jtag_slave_chipselect,     --                                                .chipselect
+			PLL_pll_slave_address                                 => mm_interconnect_1_pll_pll_slave_address,                      --                                   PLL_pll_slave.address
+			PLL_pll_slave_write                                   => mm_interconnect_1_pll_pll_slave_write,                        --                                                .write
+			PLL_pll_slave_read                                    => mm_interconnect_1_pll_pll_slave_read,                         --                                                .read
+			PLL_pll_slave_readdata                                => mm_interconnect_1_pll_pll_slave_readdata,                     --                                                .readdata
+			PLL_pll_slave_writedata                               => mm_interconnect_1_pll_pll_slave_writedata,                    --                                                .writedata
+			RAM_s1_address                                        => mm_interconnect_1_ram_s1_address,                             --                                          RAM_s1.address
+			RAM_s1_write                                          => mm_interconnect_1_ram_s1_write,                               --                                                .write
+			RAM_s1_readdata                                       => mm_interconnect_1_ram_s1_readdata,                            --                                                .readdata
+			RAM_s1_writedata                                      => mm_interconnect_1_ram_s1_writedata,                           --                                                .writedata
+			RAM_s1_byteenable                                     => mm_interconnect_1_ram_s1_byteenable,                          --                                                .byteenable
+			RAM_s1_chipselect                                     => mm_interconnect_1_ram_s1_chipselect,                          --                                                .chipselect
+			RAM_s1_clken                                          => mm_interconnect_1_ram_s1_clken,                               --                                                .clken
+			RAM_WS2812_s1_address                                 => mm_interconnect_1_ram_ws2812_s1_address,                      --                                   RAM_WS2812_s1.address
+			RAM_WS2812_s1_write                                   => mm_interconnect_1_ram_ws2812_s1_write,                        --                                                .write
+			RAM_WS2812_s1_readdata                                => mm_interconnect_1_ram_ws2812_s1_readdata,                     --                                                .readdata
+			RAM_WS2812_s1_writedata                               => mm_interconnect_1_ram_ws2812_s1_writedata,                    --                                                .writedata
+			RAM_WS2812_s1_byteenable                              => mm_interconnect_1_ram_ws2812_s1_byteenable,                   --                                                .byteenable
+			RAM_WS2812_s1_chipselect                              => mm_interconnect_1_ram_ws2812_s1_chipselect,                   --                                                .chipselect
+			RAM_WS2812_s1_clken                                   => mm_interconnect_1_ram_ws2812_s1_clken,                        --                                                .clken
+			TIMER0_s1_address                                     => mm_interconnect_1_timer0_s1_address,                          --                                       TIMER0_s1.address
+			TIMER0_s1_write                                       => mm_interconnect_1_timer0_s1_write,                            --                                                .write
+			TIMER0_s1_readdata                                    => mm_interconnect_1_timer0_s1_readdata,                         --                                                .readdata
+			TIMER0_s1_writedata                                   => mm_interconnect_1_timer0_s1_writedata,                        --                                                .writedata
+			TIMER0_s1_chipselect                                  => mm_interconnect_1_timer0_s1_chipselect,                       --                                                .chipselect
+			WS2812_RAM_INT_0_avalon_slave_0_address               => mm_interconnect_1_ws2812_ram_int_0_avalon_slave_0_address,    --                 WS2812_RAM_INT_0_avalon_slave_0.address
+			WS2812_RAM_INT_0_avalon_slave_0_write                 => mm_interconnect_1_ws2812_ram_int_0_avalon_slave_0_write,      --                                                .write
+			WS2812_RAM_INT_0_avalon_slave_0_read                  => mm_interconnect_1_ws2812_ram_int_0_avalon_slave_0_read,       --                                                .read
+			WS2812_RAM_INT_0_avalon_slave_0_readdata              => mm_interconnect_1_ws2812_ram_int_0_avalon_slave_0_readdata,   --                                                .readdata
+			WS2812_RAM_INT_0_avalon_slave_0_writedata             => mm_interconnect_1_ws2812_ram_int_0_avalon_slave_0_writedata,  --                                                .writedata
+			WS2812_RAM_INT_0_avalon_slave_0_byteenable            => mm_interconnect_1_ws2812_ram_int_0_avalon_slave_0_byteenable  --                                                .byteenable
 		);
 
 	irq_mapper : component tutorial01_irq_mapper
@@ -883,6 +738,7 @@ begin
 			reset         => rst_controller_reset_out_reset, -- clk_reset.reset
 			receiver0_irq => irq_mapper_receiver0_irq,       -- receiver0.irq
 			receiver1_irq => irq_mapper_receiver1_irq,       -- receiver1.irq
+			receiver2_irq => irq_mapper_receiver2_irq,       -- receiver2.irq
 			sender_irq    => cpu_irq_irq                     --    sender.irq
 		);
 

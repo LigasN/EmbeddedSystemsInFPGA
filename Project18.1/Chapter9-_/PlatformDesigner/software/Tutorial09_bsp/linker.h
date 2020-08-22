@@ -4,7 +4,7 @@
  * Machine generated for CPU 'CPU' in SOPC Builder design 'tutorial01'
  * SOPC Builder design path: ../../tutorial01.sopcinfo
  *
- * Generated: Sat Aug 22 21:31:51 CEST 2020
+ * Generated: Sat Aug 22 23:09:15 CEST 2020
  */
 
 /*
@@ -65,11 +65,11 @@
  *
  */
 
-#define RAM_REGION_BASE 0x8020
+#define RAM_REGION_BASE 0x10020
 #define RAM_REGION_SPAN 32736
-#define RAM_WS2812_REGION_BASE 0x11000
+#define RAM_WS2812_REGION_BASE 0x100
 #define RAM_WS2812_REGION_SPAN 128
-#define RESET_REGION_BASE 0x8000
+#define RESET_REGION_BASE 0x10000
 #define RESET_REGION_SPAN 32
 
 
